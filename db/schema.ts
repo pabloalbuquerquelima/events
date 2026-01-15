@@ -1,21 +1,28 @@
 import { relations } from "drizzle-orm";
-import { boolean, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: boolean("email_verified")
-    .$defaultFn(() => false)
-    .notNull(),
+  emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   createdAt: timestamp("created_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .$defaultFn(() => new Date())
     .notNull(),
   updatedAt: timestamp("updated_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .$defaultFn(() => new Date())
     .notNull(),
 });
+
+export type User = typeof user.$inferSelect;
 
 export const session = pgTable("session", {
   id: text("id").primaryKey(),
@@ -54,12 +61,8 @@ export const verification = pgTable("verification", {
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
-  ),
-  updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
-  ),
+  createdAt: timestamp("created_at").$defaultFn(() => new Date()),
+  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
 export const organization = pgTable("organization", {
@@ -70,10 +73,6 @@ export const organization = pgTable("organization", {
   createdAt: timestamp("created_at").notNull(),
   metadata: text("metadata"),
 });
-
-export const organizationRelations = relations(organization, ({ many }) => ({
-  members: many(member),
-}));
 
 export type Organization = typeof organization.$inferSelect;
 
@@ -93,22 +92,9 @@ export const member = pgTable("member", {
   createdAt: timestamp("created_at").notNull(),
 });
 
-export const memberRelations = relations(member, ({ one }) => ({
-  organization: one(organization, {
-    fields: [member.organizationId],
-    references: [organization.id],
-  }),
-  user: one(user, {
-    fields: [member.userId],
-    references: [user.id],
-  }),
-}));
-
 export type Member = typeof member.$inferSelect & {
-  user: typeof user.$inferSelect;
+  user: User;
 };
-
-export type User = typeof user.$inferSelect;
 
 export const invitation = pgTable("invitation", {
   id: text("id").primaryKey(),
@@ -124,6 +110,181 @@ export const invitation = pgTable("invitation", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
+export const eventStatusEnum = pgEnum("event_status", [
+  "draft",
+  "published",
+  "ongoing",
+  "completed",
+  "cancelled",
+]);
+
+export const eventCategoryEnum = pgEnum("event_category", [
+  "workshop",
+  "palestra",
+  "seminario",
+  "formacao",
+  "congresso",
+  "outro",
+]);
+
+export const event = pgTable("event", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  bannerUrl: text("banner_url"),
+  category: eventCategoryEnum("category").default("outro").notNull(),
+
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+
+  location: text("location").notNull(),
+  address: text("address"),
+
+  maxAttendees: integer("max_attendees").notNull(),
+  currentAttendees: integer("current_attendees").default(0).notNull(),
+
+  status: eventStatusEnum("status").default("draft").notNull(),
+
+  createdBy: text("created_by")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+/* =======================
+ * INSCRIÇÕES
+ * ======================= */
+
+export const registrationStatusEnum = pgEnum("registration_status", [
+  "confirmed",
+  "attended",
+  "cancelled",
+]);
+
+export const registration = pgTable("registration", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  eventId: text("event_id")
+    .notNull()
+    .references(() => event.id, { onDelete: "cascade" }),
+
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  attendeesCount: integer("attendees_count").default(1).notNull(),
+  status: registrationStatusEnum("status").default("confirmed").notNull(),
+
+  qrCode: text("qr_code").notNull().unique(),
+  checkedInAt: timestamp("checked_in_at"),
+
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+export const waitlist = pgTable("waitlist", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+
+  eventId: text("event_id")
+    .notNull()
+    .references(() => event.id, { onDelete: "cascade" }),
+
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+
+  position: integer("position").notNull(),
+
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+/* =======================
+ * RELATIONS
+ * ======================= */
+
+export const organizationRelations = relations(organization, ({ many }) => ({
+  members: many(member),
+  events: many(event),
+}));
+
+export const memberRelations = relations(member, ({ one }) => ({
+  organization: one(organization, {
+    fields: [member.organizationId],
+    references: [organization.id],
+  }),
+  user: one(user, {
+    fields: [member.userId],
+    references: [user.id],
+  }),
+}));
+
+export const eventRelations = relations(event, ({ one, many }) => ({
+  organization: one(organization, {
+    fields: [event.organizationId],
+    references: [organization.id],
+  }),
+  creator: one(user, {
+    fields: [event.createdBy],
+    references: [user.id],
+  }),
+  registrations: many(registration),
+  waitlist: many(waitlist),
+}));
+
+export const registrationRelations = relations(registration, ({ one }) => ({
+  event: one(event, {
+    fields: [registration.eventId],
+    references: [event.id],
+  }),
+  user: one(user, {
+    fields: [registration.userId],
+    references: [user.id],
+  }),
+}));
+
+export const waitlistRelations = relations(waitlist, ({ one }) => ({
+  event: one(event, {
+    fields: [waitlist.eventId],
+    references: [event.id],
+  }),
+  user: one(user, {
+    fields: [waitlist.userId],
+    references: [user.id],
+  }),
+}));
+
+export type Event = typeof event.$inferSelect;
+export type NewEvent = typeof event.$inferInsert;
+
+export type Registration = typeof registration.$inferSelect;
+export type NewRegistration = typeof registration.$inferInsert;
+
+export type Waitlist = typeof waitlist.$inferSelect;
+export type NewWaitlist = typeof waitlist.$inferInsert;
+
 export const schema = {
   user,
   session,
@@ -132,6 +293,12 @@ export const schema = {
   organization,
   member,
   invitation,
+  event,
+  registration,
+  waitlist,
   organizationRelations,
   memberRelations,
+  eventRelations,
+  registrationRelations,
+  waitlistRelations,
 };
