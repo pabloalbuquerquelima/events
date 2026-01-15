@@ -6,7 +6,7 @@ export const createEventSchema = z
     description: z
       .string()
       .min(10, "Descrição deve ter no mínimo 10 caracteres"),
-    bannerUrl: z.string().url("URL inválida").optional().or(z.literal("")),
+    bannerUrl: z.string().optional().or(z.literal("")),
     category: z.enum([
       "workshop",
       "palestra",
@@ -15,14 +15,8 @@ export const createEventSchema = z
       "congresso",
       "outro",
     ]),
-    startDate: z.coerce.date({
-      required_error: "Data de início é obrigatória",
-      invalid_type_error: "Data inválida",
-    }),
-    endDate: z.coerce.date({
-      required_error: "Data de término é obrigatória",
-      invalid_type_error: "Data inválida",
-    }),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date(),
     location: z.string().min(3, "Local deve ter no mínimo 3 caracteres"),
     address: z.string().optional(),
     maxAttendees: z.coerce
@@ -41,11 +35,11 @@ export const createEventSchema = z
 export const updateEventSchema = createEventSchema.partial();
 
 export const publishEventSchema = z.object({
-  id: z.string().uuid("ID inválido"),
+  id: z.string(),
 });
 
 export const deleteEventSchema = z.object({
-  id: z.string().uuid("ID inválido"),
+  id: z.string(),
 });
 
 export type CreateEventInput = z.infer<typeof createEventSchema>;

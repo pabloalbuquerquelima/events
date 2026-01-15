@@ -3,7 +3,7 @@
 import { db } from "@/db/drizzle";
 import { event, registration, waitlist } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";

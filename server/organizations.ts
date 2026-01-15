@@ -1,8 +1,8 @@
 "use server";
 
-import { eq, inArray } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { member, organization } from "@/db/schema";
+import { eq, inArray } from "drizzle-orm";
 import { getCurrentUser } from "./users";
 
 export async function getOrganizations() {

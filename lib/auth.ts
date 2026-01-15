@@ -1,14 +1,14 @@
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { nextCookies } from "better-auth/next-js";
-import { lastLoginMethod, organization } from "better-auth/plugins";
-import { Resend } from "resend";
 import OrganizationInvitationEmail from "@/components/emails/organization-invitation";
 import ForgotPasswordEmail from "@/components/emails/reset-password";
 import VerifyEmail from "@/components/emails/verify-email";
 import { db } from "@/db/drizzle";
 import { schema } from "@/db/schema";
 import { getActiveOrganization } from "@/server/organizations";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { nextCookies } from "better-auth/next-js";
+import { lastLoginMethod, organization } from "better-auth/plugins";
+import { Resend } from "resend";
 import { admin, member, owner } from "./auth/permissions";
 
 const resend = new Resend(process.env.RESEND_API_KEY as string);

@@ -1,9 +1,9 @@
 "use server";
 
-import { eq } from "drizzle-orm";
 import { db } from "@/db/drizzle";
 import { member, type Role } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { eq } from "drizzle-orm";
 import { isAdmin } from "./permissions";
 
 export const addMember = async (

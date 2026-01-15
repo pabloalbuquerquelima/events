@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const registerForEventSchema = z.object({
-  eventId: z.string().uuid("ID do evento inválido"),
+  eventId: z.string().min(6, "ID do evento inválido"),
   attendeesCount: z.coerce
     .number()
     .min(1, "Número de participantes deve ser no mínimo 1")
@@ -10,11 +10,11 @@ export const registerForEventSchema = z.object({
 });
 
 export const cancelRegistrationSchema = z.object({
-  registrationId: z.string().uuid("ID da inscrição inválido"),
+  registrationId: z.string().min(6, "ID da inscrição inválido"),
 });
 
 export const checkInRegistrationSchema = z.object({
-  registrationId: z.string().uuid("ID da inscrição inválido"),
+  registrationId: z.string().min(6, "ID da inscrição inválido"),
 });
 
 export const verifyQRCodeSchema = z.object({
