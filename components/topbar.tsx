@@ -28,7 +28,7 @@ const menuItems = [
   { icon: Calendar, label: "Eventos", href: "/eventos" },
 ];
 
-export function Topbar() {
+export default function Topbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
