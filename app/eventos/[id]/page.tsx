@@ -3,6 +3,7 @@
 import { ArrowLeft, Calendar, Clock, MapPin, Users } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { EventQRCode } from "@/components/event-qr-code";
 import { RegistrationButton } from "@/components/registration-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -68,33 +69,32 @@ export default function EventDetailPage() {
   );
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen pb-16">
       {/* Banner */}
-      {event.bannerUrl && (
-        <div className="relative h-96 w-full">
-          <img
-            alt={event.title}
-            className="h-full w-full object-cover"
-            src={event.bannerUrl}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+      <div className="relative h-96 w-full">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 to-transparent" />
 
-          <Button
-            className="absolute top-4 left-4 bg-background/80 backdrop-blur-sm"
-            onClick={() => router.push("/eventos")}
-            size="icon"
-            variant="ghost"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </div>
-      )}
+        <Button
+          className="absolute top-4 left-4 bg-background/80 backdrop-blur-sm"
+          onClick={() => router.push("/eventos")}
+          size="icon"
+          variant="ghost"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+      </div>
 
       {/* Content */}
       <div className="container mx-auto max-w-6xl px-4 py-8">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
-          <div className="space-y-8 lg:col-span-2">
+
+          <div className="space-y-4 lg:col-span-2">
+            <img
+              alt={event.title}
+              className="object-cover"
+              src={event.bannerUrl}
+            />
             <div>
               <Badge className="mb-4">
                 {getEventCategoryLabel(event.category)}
@@ -108,7 +108,7 @@ export default function EventDetailPage() {
             </div>
 
             {/* Registration Section */}
-            {!isPast && event.status === "published" && (
+            {!isPast && (
               <Card>
                 <CardContent className="pt-6">
                   <RegistrationButton eventId={event.id} isFull={isFull} />
@@ -122,6 +122,7 @@ export default function EventDetailPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Informações do Evento */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Informações</CardTitle>
@@ -182,6 +183,9 @@ export default function EventDetailPage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* QR Code do Evento */}
+            <EventQRCode eventId={event.id} eventTitle={event.title} />
           </div>
         </div>
       </div>

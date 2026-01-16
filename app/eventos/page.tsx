@@ -13,8 +13,38 @@ export default function EventosPage() {
   const [pastEvents, setPastEvents] = useState<Event[]>([]);
   const { isLoading, getEvents } = useEvents();
 
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  const loadEvents = async () => {
+    // Carregar todos os eventos publicados
+    const allResult = await getEvents();
+    if (allResult.success) {
+      setAllEvents(allResult.events);
+    }
+
+    // Carregar eventos próximos
+    const upcomingResult = await getEvents({
+      status: "published",
+      upcoming: true,
+    });
+    if (upcomingResult.success) {
+      setUpcomingEvents(upcomingResult.events);
+    }
+
+    // Carregar eventos passados
+    const pastResult = await getEvents({
+      status: "completed",
+      past: true,
+    });
+    if (pastResult.success) {
+      setPastEvents(pastResult.events);
+    }
+  };
+
   return (
-    <div className="min-h-screen px-4 pt-24 pb-16">
+    <div className="min-h-screen px-4  pb-16">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-12 space-y-4 text-center">
@@ -36,9 +66,15 @@ export default function EventosPage() {
         {/* Tabs */}
         <Tabs className="space-y-8" defaultValue="all">
           <TabsList className="mx-auto grid w-full max-w-md grid-cols-3">
-            <TabsTrigger value="all">Todos</TabsTrigger>
-            <TabsTrigger value="upcoming">Próximos</TabsTrigger>
-            <TabsTrigger value="past">Passados</TabsTrigger>
+            <TabsTrigger value="all">
+              Todos {!isLoading && `(${allEvents.length})`}
+            </TabsTrigger>
+            <TabsTrigger value="upcoming">
+              Próximos {!isLoading && `(${upcomingEvents.length})`}
+            </TabsTrigger>
+            <TabsTrigger value="past">
+              Passados {!isLoading && `(${pastEvents.length})`}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="all">

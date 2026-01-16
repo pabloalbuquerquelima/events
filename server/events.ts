@@ -1,16 +1,12 @@
 "use server";
 
+import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { db } from "@/db/index.";
 import type { NewEvent } from "@/db/schema";
 import { event, registration, waitlist } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-
-// ==========================================
-// HELPERS
-// ==========================================
 
 async function getCurrentUser() {
   const session = await auth.api.getSession({
@@ -26,15 +22,8 @@ async function getCurrentUser() {
 
 async function isAdmin() {
   try {
-    const { success } = await auth.api.userHasPermission({
-      headers: await headers(),
-      body: {
-        permissions: {
-          organization: ["update", "delete"],
-        },
-      },
-    });
-    return success;
+    const user = await getCurrentUser();
+    return user.role === "admin";
   } catch {
     return false;
   }
@@ -54,7 +43,6 @@ export async function getEvents(filters?: {
     let query = db.select().from(event);
     const conditions = [];
 
-    // Filtros
     if (filters?.status) {
       conditions.push(eq(event.status, filters.status as any));
     }
@@ -71,12 +59,10 @@ export async function getEvents(filters?: {
       conditions.push(lte(event.endDate, now));
     }
 
-    // Aplicar condições
     if (conditions.length > 0) {
       query = query.where(and(...conditions)) as any;
     }
 
-    // Ordenação e limite
     query = query.orderBy(desc(event.createdAt)) as any;
 
     if (filters?.limit) {
@@ -226,7 +212,7 @@ export async function getPastEvents(limit = 5) {
 }
 
 // ==========================================
-// MUTATIONS - Criar/Editar/Deletar Eventos
+// MUTATIONS
 // ==========================================
 
 export async function createEvent(data: NewEvent) {
@@ -322,7 +308,6 @@ export async function deleteEvent(eventId: string) {
       };
     }
 
-    // Verificar se há inscrições
     const registrations = await db
       .select()
       .from(registration)
@@ -417,8 +402,6 @@ export async function cancelEvent(eventId: string) {
         error: "Event not found.",
       };
     }
-
-    // TODO: Enviar emails para todos os inscritos
 
     return {
       success: true,

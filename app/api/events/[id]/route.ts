@@ -1,50 +1,79 @@
 import { headers } from "next/headers";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { updateEventSchema } from "@/lib/validations/event";
 import { deleteEvent, getEventById, updateEvent } from "@/server/events";
 
-type Params = {
+type RouteContext = {
   params: Promise<{ id: string }>;
 };
 
-// GET /api/events/[id] - Buscar evento específico
-export async function GET(request: NextRequest, { params }: Params) {
+// GET /api/events/[id]
+export async function GET(request: Request, context: RouteContext) {
   try {
-    const { id } = await params;
+    // ✅ AWAIT params - CRÍTICO para Next.js 15
+    const { id } = await context.params;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID do evento não fornecido" },
+        { status: 400 }
+      );
+    }
+
     const result = await getEventById(id);
 
-    if (!result.success) {
-      return NextResponse.json({ error: result.error }, { status: 404 });
+    if (!(result.success && result.event)) {
+      return NextResponse.json(
+        { error: result.error || "Evento não encontrado" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({ event: result.event });
-  } catch (error) {
-    console.error("Error in GET /api/events/[id]:", error);
+  } catch (error: any) {
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: error.message || "Erro interno do servidor" },
       { status: 500 }
     );
   }
 }
 
-// PATCH /api/events/[id] - Atualizar evento
-export async function PATCH(request: NextRequest, { params }: Params) {
+// PUT /api/events/[id]
+export async function PUT(request: Request, context: RouteContext) {
   try {
+    // ✅ AWAIT params
+    const { id } = await context.params;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID do evento não fornecido" },
+        { status: 400 }
+      );
+    }
+
+    // Verificar autenticação
     const session = await auth.api.getSession({
       headers: await headers(),
     });
 
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
-    const { id } = await params;
-    const body = await request.json();
+    // Verificar se é admin
+    if (session.user.role !== "admin") {
+      return NextResponse.json(
+        { error: "Você não tem permissão para editar eventos" },
+        { status: 403 }
+      );
+    }
 
-    // Validar dados
+    // Parse e validar body
+    const body = await request.json();
     const validatedData = updateEventSchema.parse(body);
 
+    // Atualizar evento
     const result = await updateEvent(id, validatedData as any);
 
     if (!result.success) {
@@ -53,29 +82,54 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
     return NextResponse.json({
       event: result.event,
-      message: "Event updated successfully",
+      message: "Evento atualizado com sucesso",
     });
   } catch (error: any) {
-    console.error("Error in PATCH /api/events/[id]:", error);
+    if (error.name === "ZodError") {
+      return NextResponse.json(
+        { error: "Dados inválidos", details: error.errors },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: error.message || "Erro interno do servidor" },
       { status: 500 }
     );
   }
 }
 
-// DELETE /api/events/[id] - Deletar evento
-export async function DELETE(request: NextRequest, { params }: Params) {
+// DELETE /api/events/[id]
+export async function DELETE(request: Request, context: RouteContext) {
   try {
+    // ✅ AWAIT params
+    const { id } = await context.params;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID do evento não fornecido" },
+        { status: 400 }
+      );
+    }
+
+    // Verificar autenticação
     const session = await auth.api.getSession({
       headers: await headers(),
     });
 
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
 
-    const { id } = await params;
+    // Verificar se é admin
+    if (session.user.role !== "admin") {
+      return NextResponse.json(
+        { error: "Você não tem permissão para deletar eventos" },
+        { status: 403 }
+      );
+    }
+
+    // Deletar evento
     const result = await deleteEvent(id);
 
     if (!result.success) {
@@ -83,12 +137,11 @@ export async function DELETE(request: NextRequest, { params }: Params) {
     }
 
     return NextResponse.json({
-      message: "Event deleted successfully",
+      message: "Evento deletado com sucesso",
     });
-  } catch (error) {
-    console.error("Error in DELETE /api/events/[id]:", error);
+  } catch (error: any) {
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: error.message || "Erro interno do servidor" },
       { status: 500 }
     );
   }

@@ -3,7 +3,7 @@
 import { Calendar, MapPin, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react"; // ✅ Adicione useEffect
 import { QRCodeDisplay } from "@/components/qr-code-display";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,23 @@ export default function MinhasInscricoesPage() {
   const { data: session } = authClient.useSession();
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const { isLoading, getMyRegistrations } = useRegistrations();
+
+  // ✅ ADICIONE ESTE useEffect
+  useEffect(() => {
+    if (!session?.user) {
+      router.push("/login?redirect=/painel/minhas-inscricoes");
+      return;
+    }
+
+    async function loadRegistrations() {
+      const result = await getMyRegistrations();
+      if (result.success) {
+        setRegistrations(result.registrations);
+      }
+    }
+
+    loadRegistrations();
+  }, [session]); // Executa quando a sessão carregar
 
   if (isLoading) {
     return (

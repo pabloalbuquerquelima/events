@@ -1,7 +1,7 @@
-import { auth } from "@/lib/auth";
-import { checkUserRegistration } from "@/server/registrations";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { checkUserRegistration } from "@/server/registrations";
 
 // POST /api/registrations/check - Verificar se usuário está inscrito
 export async function POST(request: NextRequest) {

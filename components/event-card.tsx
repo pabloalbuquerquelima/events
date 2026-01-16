@@ -1,5 +1,7 @@
 "use client";
 
+import { Calendar, Edit, MapPin, Trash2, Users } from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,8 +19,6 @@ import {
   getEventCategoryLabel,
   isEventFull,
 } from "@/lib/utils/event";
-import { Calendar, Edit, MapPin, Trash2, Users } from "lucide-react";
-import Link from "next/link";
 
 interface EventCardProps {
   event: Event;
