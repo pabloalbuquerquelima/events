@@ -1,9 +1,9 @@
+import { db } from "@/db/index.";
+import { schema } from "@/db/schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { admin, lastLoginMethod } from "better-auth/plugins";
-import { db } from "@/db/index.";
-import { schema } from "@/db/schema";
 
 export const auth = betterAuth({
   user: {
@@ -42,7 +42,7 @@ export const auth = betterAuth({
     session: {
       create: {
         before: async (session) => {
-          const user = await db.query.users.findFirst({
+          const user = await db.query.user.findFirst({
             where: (users, { eq }) => eq(users.id, session.userId),
           });
           return {

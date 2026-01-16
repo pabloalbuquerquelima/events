@@ -1,8 +1,8 @@
-import { headers } from "next/headers";
-import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { registerForEventSchema } from "@/lib/validations/registration";
 import { getUserRegistrations, registerForEvent } from "@/server/registrations";
+import { headers } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 
 // GET /api/registrations - Listar inscrições do usuário
 export async function GET(request: NextRequest) {

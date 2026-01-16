@@ -69,10 +69,6 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
-export const role = pgEnum("role", ["member", "admin", "owner"]);
-
-export type Role = (typeof role.enumValues)[number];
-
 export const eventStatusEnum = pgEnum("event_status", [
   "draft",
   "published",

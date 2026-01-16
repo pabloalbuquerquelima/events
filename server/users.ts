@@ -1,11 +1,11 @@
 "use server";
 
-import { eq, inArray, not } from "drizzle-orm";
+import { db } from "@/db/index.";
+import { user } from "@/db/schema";
+import { auth } from "@/lib/auth";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { db } from "@/db/index.";
-import { member, user } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 export const getCurrentUser = async () => {
   const session = await auth.api.getSession({
@@ -78,27 +78,5 @@ export const signUp = async (
       success: false,
       message: e.message || "An unknown error occurred.",
     };
-  }
-};
-
-export const getUsers = async (organizationId: string) => {
-  try {
-    const members = await db.query.member.findMany({
-      where: eq(member.organizationId, organizationId),
-    });
-
-    const users = await db.query.user.findMany({
-      where: not(
-        inArray(
-          user.id,
-          members.map((m) => m.userId)
-        )
-      ),
-    });
-
-    return users;
-  } catch (error) {
-    console.error(error);
-    return [];
   }
 };

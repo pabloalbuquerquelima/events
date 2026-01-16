@@ -1,12 +1,12 @@
 "use server";
 
-import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { db } from "@/db/index.";
 import type { NewEvent } from "@/db/schema";
 import { event, registration, waitlist } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 // ==========================================
 // HELPERS
@@ -26,7 +26,7 @@ async function getCurrentUser() {
 
 async function isAdmin() {
   try {
-    const { success } = await auth.api.hasPermission({
+    const { success } = await auth.api.userHasPermission({
       headers: await headers(),
       body: {
         permissions: {
@@ -39,10 +39,6 @@ async function isAdmin() {
     return false;
   }
 }
-
-// ==========================================
-// QUERIES - Buscar Eventos
-// ==========================================
 
 export async function getEvents(filters?: {
   status?: string;

@@ -1,12 +1,12 @@
 "use server";
 
+import { db } from "@/db/index.";
+import { event, registration, waitlist } from "@/db/schema";
+import { auth } from "@/lib/auth";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
-import { db } from "@/db/index.";
-import { event, registration, waitlist } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 // ==========================================
 // HELPERS
@@ -26,7 +26,7 @@ async function getCurrentUser() {
 
 async function isAdmin() {
   try {
-    const { success } = await auth.api.hasPermission({
+    const { success } = await auth.api.userHasPermission({
       headers: await headers(),
       body: {
         permissions: {
