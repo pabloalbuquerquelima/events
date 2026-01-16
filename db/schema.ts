@@ -6,18 +6,18 @@ import {
   pgTable,
   text,
   timestamp,
-  uuid,
 } from "drizzle-orm/pg-core";
-import { randomUUID } from "node:crypto";
 
 export const user = pgTable("user", {
-  id: uuid("id")
-    .primaryKey()
-    .$defaultFn(() => randomUUID()),
+  id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
+  role: text("role").default("user"),
+  banned: boolean("banned").default(false),
+  banReason: text("ban_reason"),
+  banExpires: timestamp("ban_expires"),
   createdAt: timestamp("created_at")
     .$defaultFn(() => new Date())
     .notNull(),
@@ -29,28 +29,24 @@ export const user = pgTable("user", {
 export type User = typeof user.$inferSelect;
 
 export const session = pgTable("session", {
-  id: uuid("id")
-    .primaryKey()
-    .$defaultFn(() => randomUUID()),
+  id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   activeOrganizationId: text("active_organization_id"),
 });
 
 export const account = pgTable("account", {
-  id: uuid("id")
-    .primaryKey()
-    .$defaultFn(() => randomUUID()),
+  id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),
@@ -65,9 +61,7 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-  id: uuid("id")
-    .primaryKey()
-    .$defaultFn(() => randomUUID()),
+  id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
@@ -75,56 +69,9 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
-export const organization = pgTable("organization", {
-  id: uuid("id")
-    .primaryKey()
-    .$defaultFn(() => randomUUID()),
-  name: text("name").notNull(),
-  slug: text("slug").unique(),
-  logo: text("logo"),
-  createdAt: timestamp("created_at").notNull(),
-  metadata: text("metadata"),
-});
-
-export type Organization = typeof organization.$inferSelect;
-
 export const role = pgEnum("role", ["member", "admin", "owner"]);
 
 export type Role = (typeof role.enumValues)[number];
-
-export const member = pgTable("member", {
-  id: uuid("id")
-    .primaryKey()
-    .$defaultFn(() => randomUUID()),
-  organizationId: text("organization_id")
-    .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
-  userId: uuid("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  role: role("role").default("member").notNull(),
-  createdAt: timestamp("created_at").notNull(),
-});
-
-export type Member = typeof member.$inferSelect & {
-  user: User;
-};
-
-export const invitation = pgTable("invitation", {
-  id: uuid("id")
-    .primaryKey()
-    .$defaultFn(() => randomUUID()),
-  organizationId: text("organization_id")
-    .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
-  email: text("email").notNull(),
-  role: text("role"),
-  status: text("status").default("pending").notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
-  inviterId: text("inviter_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-});
 
 export const eventStatusEnum = pgEnum("event_status", [
   "draft",
@@ -144,13 +91,9 @@ export const eventCategoryEnum = pgEnum("event_category", [
 ]);
 
 export const event = pgTable("event", {
-  id: uuid("id")
+  id: text("id")
     .primaryKey()
-    .$defaultFn(() => randomUUID()),
-  organizationId: text("organization_id")
-    .notNull()
-    .references(() => organization.id, { onDelete: "cascade" }),
-
+    .$defaultFn(() => crypto.randomUUID()),
   title: text("title").notNull(),
   description: text("description").notNull(),
   bannerUrl: text("banner_url"),
@@ -190,14 +133,15 @@ export const registrationStatusEnum = pgEnum("registration_status", [
 ]);
 
 export const registration = pgTable("registration", {
-  id: uuid("id")
+  id: text("id")
     .primaryKey()
-    .$defaultFn(() => randomUUID()),
+    .$defaultFn(() => crypto.randomUUID()),
+
   eventId: text("event_id")
     .notNull()
     .references(() => event.id, { onDelete: "cascade" }),
 
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 
@@ -216,14 +160,15 @@ export const registration = pgTable("registration", {
 });
 
 export const waitlist = pgTable("waitlist", {
-  id: uuid("id")
+  id: text("id")
     .primaryKey()
-    .$defaultFn(() => randomUUID()),
+    .$defaultFn(() => crypto.randomUUID()),
+
   eventId: text("event_id")
     .notNull()
     .references(() => event.id, { onDelete: "cascade" }),
 
-  userId: uuid("user_id")
+  userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 
@@ -238,27 +183,7 @@ export const waitlist = pgTable("waitlist", {
  * RELATIONS
  * ======================= */
 
-export const organizationRelations = relations(organization, ({ many }) => ({
-  members: many(member),
-  events: many(event),
-}));
-
-export const memberRelations = relations(member, ({ one }) => ({
-  organization: one(organization, {
-    fields: [member.organizationId],
-    references: [organization.id],
-  }),
-  user: one(user, {
-    fields: [member.userId],
-    references: [user.id],
-  }),
-}));
-
 export const eventRelations = relations(event, ({ one, many }) => ({
-  organization: one(organization, {
-    fields: [event.organizationId],
-    references: [organization.id],
-  }),
   creator: one(user, {
     fields: [event.createdBy],
     references: [user.id],
@@ -303,14 +228,9 @@ export const schema = {
   session,
   account,
   verification,
-  organization,
-  member,
-  invitation,
   event,
   registration,
   waitlist,
-  organizationRelations,
-  memberRelations,
   eventRelations,
   registrationRelations,
   waitlistRelations,

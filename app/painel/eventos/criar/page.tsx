@@ -1,3 +1,7 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { CreateEventForm } from "@/components/forms/create-event-form";
 import {
   Card,
@@ -6,39 +10,32 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAdmin } from "@/hooks/use-admin";
 
-async function isAdmin() {
-  try {
-    const { success } = await auth.api.hasPermission({
-      headers: await headers(),
-      body: {
-        permissions: {
-          organization: ["update", "delete"],
-        },
-      },
-    });
-    return success;
-  } catch {
-    return false;
-  }
-}
+export default function CriarEventoPage() {
+  const router = useRouter();
+  const { isAdmin, isLoading } = useAdmin();
 
-export default async function CriarEventoPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  useEffect(() => {
+    // Só redireciona se terminou de carregar E não é admin
+    if (!(isLoading || isAdmin)) {
+      router.push("/eventos");
+    }
+  }, [isAdmin, isLoading, router]);
 
-  if (!session) {
-    redirect("/login");
+  if (isLoading) {
+    return (
+      <div className="min-h-screen px-4 pt-24 pb-16">
+        <div className="container mx-auto max-w-3xl">
+          <Skeleton className="h-96 w-full" />
+        </div>
+      </div>
+    );
   }
 
-  const admin = await isAdmin();
-
-  if (!admin) {
-    redirect("/eventos");
+  if (!isAdmin) {
+    return null;
   }
 
   return (

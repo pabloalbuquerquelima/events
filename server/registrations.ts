@@ -1,12 +1,12 @@
 "use server";
 
-import { db } from "@/db/drizzle";
-import { event, registration, waitlist } from "@/db/schema";
-import { auth } from "@/lib/auth";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
+import { db } from "@/db/index.";
+import { event, registration, waitlist } from "@/db/schema";
+import { auth } from "@/lib/auth";
 
 // ==========================================
 // HELPERS

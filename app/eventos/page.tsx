@@ -1,14 +1,17 @@
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getEvents, getPastEvents, getUpcomingEvents } from "@/server/events";
-import { EventList } from "../../components/event-list";
+"use client";
 
-export default async function EventosPage() {
-  const [allEvents, upcomingEvents, pastEvents] = await Promise.all([
-    getEvents({ status: "published", limit: 12 }),
-    getUpcomingEvents(6),
-    getPastEvents(6),
-  ]);
+import { useEffect, useState } from "react";
+import { EventList } from "@/components/event-list";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { type Event, useEvents } from "@/hooks/use-events";
+
+export default function EventosPage() {
+  const [allEvents, setAllEvents] = useState<Event[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [pastEvents, setPastEvents] = useState<Event[]>([]);
+  const { isLoading, getEvents } = useEvents();
 
   return (
     <div className="min-h-screen px-4 pt-24 pb-16">
@@ -39,24 +42,48 @@ export default async function EventosPage() {
           </TabsList>
 
           <TabsContent value="all">
-            <EventList
-              emptyMessage="Nenhum evento disponível no momento."
-              events={allEvents.events}
-            />
+            {isLoading ? (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(6)].map((_, i) => (
+                  <Skeleton className="h-96 w-full rounded-lg" key={i} />
+                ))}
+              </div>
+            ) : (
+              <EventList
+                emptyMessage="Nenhum evento disponível no momento."
+                events={allEvents}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="upcoming">
-            <EventList
-              emptyMessage="Nenhum evento próximo disponível."
-              events={upcomingEvents.events}
-            />
+            {isLoading ? (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(6)].map((_, i) => (
+                  <Skeleton className="h-96 w-full rounded-lg" key={i} />
+                ))}
+              </div>
+            ) : (
+              <EventList
+                emptyMessage="Nenhum evento próximo disponível."
+                events={upcomingEvents}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="past">
-            <EventList
-              emptyMessage="Nenhum evento passado encontrado."
-              events={pastEvents.events}
-            />
+            {isLoading ? (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(6)].map((_, i) => (
+                  <Skeleton className="h-96 w-full rounded-lg" key={i} />
+                ))}
+              </div>
+            ) : (
+              <EventList
+                emptyMessage="Nenhum evento passado encontrado."
+                events={pastEvents}
+              />
+            )}
           </TabsContent>
         </Tabs>
       </div>

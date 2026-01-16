@@ -1,12 +1,12 @@
 "use server";
 
-import { db } from "@/db/drizzle";
-import type { NewEvent } from "@/db/schema";
-import { event, registration, waitlist } from "@/db/schema";
-import { auth } from "@/lib/auth";
 import { and, asc, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { db } from "@/db/index.";
+import type { NewEvent } from "@/db/schema";
+import { event, registration, waitlist } from "@/db/schema";
+import { auth } from "@/lib/auth";
 
 // ==========================================
 // HELPERS

@@ -1,5 +1,10 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,63 +24,47 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type { Event } from "@/db/schema";
+import { type Event, useEvents } from "@/hooks/use-events";
 import {
   type UpdateEventInput,
   updateEventSchema,
 } from "@/lib/validations/event";
-import { updateEvent } from "@/server/events";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 interface EditEventFormProps {
   event: Event;
 }
 
 export function EditEventForm({ event }: EditEventFormProps) {
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { isLoading, updateEvent } = useEvents();
 
   const form = useForm<UpdateEventInput>({
     resolver: zodResolver(updateEventSchema),
-    defaultValues: {
-      title: event.title,
-      description: event.description,
-      bannerUrl: event.bannerUrl || "",
-      category: event.category,
-      location: event.location,
-      address: event.address || "",
-      maxAttendees: event.maxAttendees,
-      status: event.status,
-    },
   });
 
   useEffect(() => {
-    form.setValue("startDate", new Date(event.startDate));
-    form.setValue("endDate", new Date(event.endDate));
+    if (event) {
+      form.reset({
+        title: event.title,
+        description: event.description,
+        bannerUrl: event.bannerUrl || "",
+        category: event.category as any,
+        location: event.location,
+        address: event.address || "",
+        maxAttendees: event.maxAttendees,
+        status: event.status as any,
+        startDate: new Date(event.startDate),
+        endDate: new Date(event.endDate),
+      });
+    }
   }, [event, form]);
 
   async function onSubmit(data: UpdateEventInput) {
-    setIsLoading(true);
+    const result = await updateEvent(event.id, data as any);
 
-    try {
-      const result = await updateEvent(event.id, data as any);
-
-      if (result.success) {
-        toast.success("Evento atualizado com sucesso!");
-        router.push(`/painel/eventos/${event.id}`);
-        router.refresh();
-      } else {
-        toast.error(result.error || "Erro ao atualizar evento.");
-      }
-    } catch (error) {
-      toast.error("Erro ao atualizar evento.");
-    } finally {
-      setIsLoading(false);
+    if (result.success) {
+      router.push(`/painel/eventos/${event.id}`);
+      router.refresh();
     }
   }
 
@@ -89,7 +78,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
             <FormItem>
               <FormLabel>Título do Evento</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: Workshop de Matemática" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -103,11 +92,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
             <FormItem>
               <FormLabel>Descrição</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Descreva o evento..."
-                  rows={5}
-                  {...field}
-                />
+                <Textarea rows={5} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -121,10 +106,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Categoria</FormLabel>
-                <Select
-                  defaultValue={field.value}
-                  onValueChange={field.onChange}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue />
@@ -224,35 +206,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
             <FormItem>
               <FormLabel>Local</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: Auditório Principal" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Endereço Completo (opcional)</FormLabel>
-              <FormControl>
-                <Input placeholder="Rua, número, bairro..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="bannerUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>URL do Banner (opcional)</FormLabel>
-              <FormControl>
-                <Input placeholder="https://..." type="url" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -265,7 +219,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Status</FormLabel>
-              <Select defaultValue={field.value} onValueChange={field.onChange}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue />

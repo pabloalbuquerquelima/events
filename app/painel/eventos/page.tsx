@@ -1,51 +1,75 @@
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { auth } from "@/lib/auth";
-import { getDashboardStats, getEvents } from "@/server/events";
+"use client";
+
 import { Plus } from "lucide-react";
-import { headers } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { EventStats } from "../../../components/event-stats";
-import { EventList } from "../../../components/events/event-list";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { EventList } from "@/components/event-list";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAdmin } from "@/hooks/use-admin";
+import { type Event, useEvents } from "@/hooks/use-events";
 
-async function isAdmin() {
-  try {
-    const { success } = await auth.api.hasPermission({
-      headers: await headers(),
-      body: {
-        permissions: {
-          organization: ["update", "delete"],
-        },
-      },
-    });
-    return success;
-  } catch {
-    return false;
+export default function EventosAdminPage() {
+  const router = useRouter();
+  const { isAdmin, isLoading: isCheckingAdmin } = useAdmin();
+  const [allEvents, setAllEvents] = useState<Event[]>([]);
+  const [publishedEvents, setPublishedEvents] = useState<Event[]>([]);
+  const [draftEvents, setDraftEvents] = useState<Event[]>([]);
+  const { isLoading, getEvents, deleteEvent } = useEvents();
+
+  useEffect(() => {
+    if (!(isCheckingAdmin || isAdmin)) {
+      router.push("/eventos");
+    }
+  }, [isAdmin, isCheckingAdmin, router]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadEvents();
+    }
+  }, [isAdmin]);
+
+  async function loadEvents() {
+    const [all, published, drafts] = await Promise.all([
+      getEvents(),
+      getEvents({ status: "published" }),
+      getEvents({ status: "draft" }),
+    ]);
+
+    if (all.success) setAllEvents(all.events);
+    if (published.success) setPublishedEvents(published.events);
+    if (drafts.success) setDraftEvents(drafts.events);
   }
-}
 
-export default async function EventosAdminPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const handleEdit = (eventId: string) => {
+    router.push(`/painel/eventos/${eventId}/editar`);
+  };
 
-  if (!session) {
-    redirect("/login");
+  const handleDelete = async (eventId: string) => {
+    if (!confirm("Tem certeza que deseja deletar este evento?")) return;
+
+    const result = await deleteEvent(eventId);
+    if (result.success) {
+      loadEvents();
+    }
+  };
+
+  if (isCheckingAdmin) {
+    return (
+      <div className="min-h-screen px-4 pt-24 pb-16">
+        <div className="container mx-auto max-w-6xl">
+          <Skeleton className="mb-8 h-12 w-64" />
+          <Skeleton className="h-96 w-full" />
+        </div>
+      </div>
+    );
   }
 
-  const admin = await isAdmin();
-
-  if (!admin) {
-    redirect("/eventos");
+  if (!isAdmin) {
+    return null;
   }
-
-  const [allEvents, publishedEvents, draftEvents, stats] = await Promise.all([
-    getEvents(),
-    getEvents({ status: "published" }),
-    getEvents({ status: "draft" }),
-    getDashboardStats(),
-  ]);
 
   return (
     <div className="min-h-screen px-4 pt-24 pb-16">
@@ -66,49 +90,70 @@ export default async function EventosAdminPage() {
           </Button>
         </div>
 
-        {/* Stats (se disponíveis) */}
-        {stats && (
-          <div className="mb-8">
-            <EventStats stats={stats} />
-          </div>
-        )}
-
         {/* Tabs */}
         <Tabs className="space-y-8" defaultValue="all">
           <TabsList>
-            <TabsTrigger value="all">
-              Todos ({allEvents.events.length})
-            </TabsTrigger>
+            <TabsTrigger value="all">Todos ({allEvents.length})</TabsTrigger>
             <TabsTrigger value="published">
-              Publicados ({publishedEvents.events.length})
+              Publicados ({publishedEvents.length})
             </TabsTrigger>
             <TabsTrigger value="drafts">
-              Rascunhos ({draftEvents.events.length})
+              Rascunhos ({draftEvents.length})
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="all">
-            <EventList
-              emptyMessage="Nenhum evento criado ainda."
-              events={allEvents.events}
-              isAdmin
-            />
+            {isLoading ? (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(6)].map((_, i) => (
+                  <Skeleton className="h-96 w-full rounded-lg" key={i} />
+                ))}
+              </div>
+            ) : (
+              <EventList
+                emptyMessage="Nenhum evento criado ainda."
+                events={allEvents}
+                isAdmin
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="published">
-            <EventList
-              emptyMessage="Nenhum evento publicado."
-              events={publishedEvents.events}
-              isAdmin
-            />
+            {isLoading ? (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(6)].map((_, i) => (
+                  <Skeleton className="h-96 w-full rounded-lg" key={i} />
+                ))}
+              </div>
+            ) : (
+              <EventList
+                emptyMessage="Nenhum evento publicado."
+                events={publishedEvents}
+                isAdmin
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="drafts">
-            <EventList
-              emptyMessage="Nenhum rascunho."
-              events={draftEvents.events}
-              isAdmin
-            />
+            {isLoading ? (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(6)].map((_, i) => (
+                  <Skeleton className="h-96 w-full rounded-lg" key={i} />
+                ))}
+              </div>
+            ) : (
+              <EventList
+                emptyMessage="Nenhum rascunho."
+                events={draftEvents}
+                isAdmin
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+              />
+            )}
           </TabsContent>
         </Tabs>
       </div>

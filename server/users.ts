@@ -1,11 +1,11 @@
 "use server";
 
-import { db } from "@/db/drizzle";
-import { member, user } from "@/db/schema";
-import { auth } from "@/lib/auth";
 import { eq, inArray, not } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { db } from "@/db/index.";
+import { member, user } from "@/db/schema";
+import { auth } from "@/lib/auth";
 
 export const getCurrentUser = async () => {
   const session = await auth.api.getSession({

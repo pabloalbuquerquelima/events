@@ -1,7 +1,14 @@
-import { RegistrationButton } from "@/components/events/registration-button";
+"use client";
+
+import { ArrowLeft, Calendar, Clock, MapPin, Users } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { RegistrationButton } from "@/components/registration-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { type Event, useEvents } from "@/hooks/use-events";
 import {
   formatEventDate,
   formatEventTime,
@@ -12,25 +19,46 @@ import {
   getEventCategoryLabel,
   isEventFull,
 } from "@/lib/utils/event";
-import { getEventById } from "@/server/events";
-import { checkUserRegistration } from "@/server/registrations";
-import { ArrowLeft, Calendar, Clock, MapPin, Users } from "lucide-react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
 
-export default async function EventDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const { event } = await getEventById(id);
+export default function EventDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const [event, setEvent] = useState<Event | null>(null);
+  const { isLoading, getEventById } = useEvents();
 
-  if (!event) {
-    notFound();
+  const eventId = params?.id as string;
+
+  useEffect(() => {
+    async function loadEvent() {
+      if (!eventId) return;
+
+      const result = await getEventById(eventId);
+      if (result.success && result.event) {
+        setEvent(result.event);
+      } else {
+        router.push("/eventos");
+      }
+    }
+
+    loadEvent();
+  }, [eventId]);
+
+  if (isLoading || !event) {
+    return (
+      <div className="min-h-screen pt-24 pb-16">
+        <div className="container mx-auto max-w-6xl px-4">
+          <Skeleton className="mb-8 h-96 w-full" />
+          <div className="grid gap-8 lg:grid-cols-3">
+            <div className="space-y-4 lg:col-span-2">
+              <Skeleton className="h-12 w-3/4" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+            <Skeleton className="h-64 w-full" />
+          </div>
+        </div>
+      </div>
+    );
   }
-
-  const { isRegistered, isOnWaitlist } = await checkUserRegistration(id);
 
   const isPast = isEventPast(event.endDate);
   const isFull = isEventFull(event.maxAttendees, event.currentAttendees);
@@ -52,14 +80,12 @@ export default async function EventDetailPage({
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
 
           <Button
-            asChild
             className="absolute top-4 left-4 bg-background/80 backdrop-blur-sm"
+            onClick={() => router.push("/eventos")}
             size="icon"
             variant="ghost"
           >
-            <Link href="/eventos">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
+            <ArrowLeft className="h-5 w-5" />
           </Button>
         </div>
       )}
@@ -85,18 +111,9 @@ export default async function EventDetailPage({
             {!isPast && event.status === "published" && (
               <Card>
                 <CardContent className="pt-6">
-                  <RegistrationButton
-                    eventId={event.id}
-                    isFull={isFull}
-                    isOnWaitlist={isOnWaitlist}
-                    isRegistered={isRegistered}
-                  />
+                  <RegistrationButton eventId={event.id} isFull={isFull} />
                   <p className="mt-2 text-center text-muted-foreground text-xs">
-                    {isRegistered
-                      ? "Você receberá um QR code para entrada"
-                      : isOnWaitlist
-                        ? "Você será notificado caso uma vaga abra"
-                        : "Inscrições gratuitas enquanto houver vagas"}
+                    Inscrições gratuitas • Vagas limitadas
                   </p>
                 </CardContent>
               </Card>
@@ -107,7 +124,7 @@ export default async function EventDetailPage({
           <div className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Informações do Evento</CardTitle>
+                <CardTitle className="text-lg">Informações</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-start gap-3">
@@ -159,7 +176,7 @@ export default async function EventDetailPage({
                     >
                       {isFull
                         ? "Esgotado"
-                        : `${availableSpots} de ${event.maxAttendees} vagas disponíveis`}
+                        : `${availableSpots} de ${event.maxAttendees} disponíveis`}
                     </p>
                   </div>
                 </div>

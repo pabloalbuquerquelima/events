@@ -1,3 +1,7 @@
+"use client";
+
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { EditEventForm } from "@/components/forms/edit-event-form";
 import {
   Card,
@@ -6,51 +10,52 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { auth } from "@/lib/auth";
-import { getEventById } from "@/server/events";
-import { headers } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAdmin } from "@/hooks/use-admin";
+import { type Event, useEvents } from "@/hooks/use-events";
 
-async function isAdmin() {
-  try {
-    const { success } = await auth.api.hasPermission({
-      headers: await headers(),
-      body: {
-        permissions: {
-          organization: ["update", "delete"],
-        },
-      },
-    });
-    return success;
-  } catch {
-    return false;
-  }
-}
+export default function EditarEventoPage() {
+  const params = useParams();
+  const router = useRouter();
+  const { isAdmin, isLoading: isCheckingAdmin } = useAdmin();
+  const [event, setEvent] = useState<Event | null>(null);
+  const { isLoading, getEventById } = useEvents();
 
-export default async function EditarEventoPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const eventId = params?.id as string;
 
-  if (!session) {
-    redirect("/login");
-  }
+  useEffect(() => {
+    if (!(isCheckingAdmin || isAdmin)) {
+      router.push("/eventos");
+    }
+  }, [isAdmin, isCheckingAdmin, router]);
 
-  const admin = await isAdmin();
+  useEffect(() => {
+    if (isAdmin && eventId) {
+      loadEvent();
+    }
+  }, [isAdmin, eventId]);
 
-  if (!admin) {
-    redirect("/eventos");
+  async function loadEvent() {
+    const result = await getEventById(eventId);
+    if (result.success && result.event) {
+      setEvent(result.event);
+    } else {
+      router.push("/painel/eventos");
+    }
   }
 
-  const { id } = await params;
-  const { event } = await getEventById(id);
+  if (isCheckingAdmin || isLoading || !event) {
+    return (
+      <div className="min-h-screen px-4 pt-24 pb-16">
+        <div className="container mx-auto max-w-3xl">
+          <Skeleton className="h-96 w-full" />
+        </div>
+      </div>
+    );
+  }
 
-  if (!event) {
-    notFound();
+  if (!isAdmin) {
+    return null;
   }
 
   return (

@@ -1,5 +1,9 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -19,21 +23,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { useEvents } from "@/hooks/use-events";
 import {
   type CreateEventInput,
   createEventSchema,
 } from "@/lib/validations/event";
-import { createEvent } from "@/server/events";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 
 export function CreateEventForm() {
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { isLoading, createEvent } = useEvents();
 
   const form = useForm<CreateEventInput>({
     resolver: zodResolver(createEventSchema),
@@ -50,28 +48,11 @@ export function CreateEventForm() {
   });
 
   async function onSubmit(data: CreateEventInput) {
-    setIsLoading(true);
+    const result = await createEvent(data as any);
 
-    try {
-      const result = await createEvent({
-        ...data,
-        currentAttendees: 0,
-        createdBy: "", // Será preenchido no server action
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      } as any);
-
-      if (result.success && result.event) {
-        toast.success("Evento criado com sucesso!");
-        router.push(`/painel/eventos/${result.event.id}`);
-        router.refresh();
-      } else {
-        toast.error(result.error || "Erro ao criar evento.");
-      }
-    } catch (error) {
-      toast.error("Erro ao criar evento.");
-    } finally {
-      setIsLoading(false);
+    if (result.success && result.event) {
+      router.push(`/painel/eventos/${result.event.id}`);
+      router.refresh();
     }
   }
 
@@ -83,7 +64,7 @@ export function CreateEventForm() {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Título do Evento</FormLabel>
+              <FormLabel>Título do Evento *</FormLabel>
               <FormControl>
                 <Input
                   placeholder="Ex: Workshop de Matemática Aplicada"
@@ -100,7 +81,7 @@ export function CreateEventForm() {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Descrição</FormLabel>
+              <FormLabel>Descrição *</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Descreva o evento, objetivos e público-alvo..."
@@ -108,9 +89,6 @@ export function CreateEventForm() {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>
-                Seja claro e objetivo sobre o que será abordado no evento.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -122,14 +100,14 @@ export function CreateEventForm() {
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Categoria</FormLabel>
+                <FormLabel>Categoria *</FormLabel>
                 <Select
                   defaultValue={field.value}
                   onValueChange={field.onChange}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione a categoria" />
+                      <SelectValue />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -151,11 +129,10 @@ export function CreateEventForm() {
             name="maxAttendees"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Número de Vagas</FormLabel>
+                <FormLabel>Número de Vagas *</FormLabel>
                 <FormControl>
                   <Input
                     min={1}
-                    placeholder="50"
                     type="number"
                     {...field}
                     onChange={(e) =>
@@ -175,7 +152,7 @@ export function CreateEventForm() {
             name="startDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Data e Hora de Início</FormLabel>
+                <FormLabel>Data e Hora de Início *</FormLabel>
                 <FormControl>
                   <Input
                     type="datetime-local"
@@ -184,7 +161,9 @@ export function CreateEventForm() {
                     value={
                       field.value instanceof Date
                         ? field.value.toISOString().slice(0, 16)
-                        : field.value
+                        : typeof field.value === "string"
+                          ? field.value
+                          : ""
                     }
                   />
                 </FormControl>
@@ -198,7 +177,7 @@ export function CreateEventForm() {
             name="endDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Data e Hora de Término</FormLabel>
+                <FormLabel>Data e Hora de Término *</FormLabel>
                 <FormControl>
                   <Input
                     type="datetime-local"
@@ -207,7 +186,9 @@ export function CreateEventForm() {
                     value={
                       field.value instanceof Date
                         ? field.value.toISOString().slice(0, 16)
-                        : field.value
+                        : typeof field.value === "string"
+                          ? field.value
+                          : ""
                     }
                   />
                 </FormControl>
@@ -222,7 +203,7 @@ export function CreateEventForm() {
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Local</FormLabel>
+              <FormLabel>Local *</FormLabel>
               <FormControl>
                 <Input
                   placeholder="Ex: Auditório Principal - SEDUC Coreaú"
@@ -265,8 +246,7 @@ export function CreateEventForm() {
                 />
               </FormControl>
               <FormDescription>
-                URL de uma imagem para o banner do evento (proporção 16:9
-                recomendada).
+                URL de uma imagem para o banner (16:9 recomendado)
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -278,11 +258,11 @@ export function CreateEventForm() {
           name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Status Inicial</FormLabel>
+              <FormLabel>Status Inicial *</FormLabel>
               <Select defaultValue={field.value} onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione o status" />
+                    <SelectValue />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -291,7 +271,7 @@ export function CreateEventForm() {
                 </SelectContent>
               </Select>
               <FormDescription>
-                Eventos em rascunho não ficam visíveis para os usuários.
+                Rascunhos não ficam visíveis para os usuários
               </FormDescription>
               <FormMessage />
             </FormItem>

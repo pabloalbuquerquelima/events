@@ -1,4 +1,8 @@
-import { EventStats } from "@/components/events/event-stats";
+import { ArrowLeft, Calendar, Edit, MapPin, Trash2, Users } from "lucide-react";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { EventStats } from "@/components/event-stats";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
-import { formatEventDateTime, isEventPast } from "@/lib/utils/date";
+import { formatEventDateTime } from "@/lib/utils/date";
 import {
   getEventCategoryLabel,
   getEventStatusLabel,
@@ -17,10 +21,6 @@ import {
 } from "@/lib/utils/event";
 import { getEventById, getEventStats } from "@/server/events";
 import { getEventRegistrations } from "@/server/registrations";
-import { ArrowLeft, Calendar, Edit, MapPin, Trash2, Users } from "lucide-react";
-import { headers } from "next/headers";
-import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
 
 async function isAdmin() {
   try {
@@ -71,8 +71,6 @@ export default async function GerenciarEventoPage({
   const { event } = eventResult;
   const { stats } = statsResult;
   const { registrations } = registrationsResult;
-
-  const isPast = isEventPast(event.endDate);
 
   return (
     <div className="min-h-screen px-4 pt-24 pb-16">

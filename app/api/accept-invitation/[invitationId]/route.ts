@@ -9,17 +9,15 @@ export async function GET(
   const { invitationId } = await params;
 
   try {
-    const data = await auth.api.acceptInvitation({
+    await auth.api.acceptInvitation({
       body: {
         invitationId,
       },
       headers: await headers(),
     });
 
-    console.log(data);
     return NextResponse.redirect(new URL("/dashboard", request.url));
   } catch (error) {
-    console.error(error);
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 }

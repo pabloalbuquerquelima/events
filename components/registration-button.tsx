@@ -1,67 +1,92 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { registerForEvent } from "@/server/registrations";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useRegistrations } from "@/hooks/use-registrations";
+import { authClient } from "@/lib/auth-client";
 
 interface RegistrationButtonProps {
   eventId: string;
-  isRegistered: boolean;
-  isOnWaitlist: boolean;
   isFull: boolean;
   disabled?: boolean;
 }
 
 export function RegistrationButton({
   eventId,
-  isRegistered,
-  isOnWaitlist,
   isFull,
   disabled,
 }: RegistrationButtonProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [isOnWaitlist, setIsOnWaitlist] = useState(false);
+
   const router = useRouter();
+  const { data: session } = authClient.useSession();
+  const { isLoading, checkRegistration, registerForEvent } = useRegistrations();
+
+  useEffect(() => {
+    async function checkStatus() {
+      if (!session?.user) {
+        setIsChecking(false);
+        return;
+      }
+
+      const result = await checkRegistration(eventId);
+      setIsRegistered(result.isRegistered);
+      setIsOnWaitlist(result.isOnWaitlist);
+      setIsChecking(false);
+    }
+
+    checkStatus();
+  }, [eventId, session]);
 
   const handleRegister = async () => {
-    setIsLoading(true);
+    if (!session?.user) {
+      router.push(`/login?redirect=/eventos/${eventId}`);
+      return;
+    }
 
-    try {
-      const result = await registerForEvent(eventId, 1);
+    const result = await registerForEvent(eventId, 1);
 
-      if (result.success) {
-        if (result.registration) {
-          toast.success("Inscrição realizada com sucesso!");
-          router.push("/painel/minhas-inscricoes");
-        } else if (result.waitlist) {
-          toast.success(
-            `Você foi adicionado à lista de espera na posição ${result.waitlist.position}!`
-          );
-          router.refresh();
-        }
+    if (result.success) {
+      if (result.registration) {
+        router.push("/painel/minhas-inscricoes");
       } else {
-        toast.error(result.error || "Erro ao realizar inscrição.");
+        router.refresh();
       }
-    } catch (error) {
-      toast.error("Erro ao realizar inscrição.");
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  if (isRegistered) {
+  if (isChecking) {
     return (
       <Button className="w-full" disabled size="lg">
-        Você já está inscrito
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        Verificando...
+      </Button>
+    );
+  }
+
+  if (!session?.user) {
+    return (
+      <Button className="w-full" onClick={handleRegister} size="lg">
+        Fazer Login para Inscrever-se
+      </Button>
+    );
+  }
+
+  if (isRegistered) {
+    return (
+      <Button className="w-full" disabled size="lg" variant="secondary">
+        Você já está inscrito ✓
       </Button>
     );
   }
 
   if (isOnWaitlist) {
     return (
-      <Button className="w-full" disabled size="lg">
+      <Button className="w-full" disabled size="lg" variant="outline">
         Você está na lista de espera
       </Button>
     );

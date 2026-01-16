@@ -1,3 +1,12 @@
+import {
+  ArrowRight,
+  Award,
+  BookOpen,
+  Calendar,
+  TrendingUp,
+  Trophy,
+} from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,15 +17,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getFeaturedEvents } from "@/server/events";
-import {
-  ArrowRight,
-  Award,
-  BookOpen,
-  Calendar,
-  TrendingUp,
-  Trophy,
-} from "lucide-react";
-import Link from "next/link";
 import { EventCarousel } from "../components/event-carousel";
 
 export default async function LandingPage() {
@@ -83,8 +83,8 @@ export default async function LandingPage() {
 
             <Card className="text-center">
               <CardContent className="pt-6">
-                <Award className="mx-auto mb-4 h-12 w-12 text-secondary" />
-                <h3 className="mb-2 font-bold text-3xl text-secondary">
+                <Award className="mx-auto mb-4 h-12 w-12 text-primary" />
+                <h3 className="mb-2 font-bold text-3xl text-primary">
                   13 Escolas
                 </h3>
                 <p className="text-muted-foreground">Premiadas SPAECE 2024</p>
