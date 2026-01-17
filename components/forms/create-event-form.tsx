@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { DateTimePicker } from "@/components/date-time-picker";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -154,17 +155,10 @@ export function CreateEventForm() {
               <FormItem>
                 <FormLabel>Data e Hora de Início *</FormLabel>
                 <FormControl>
-                  <Input
-                    type="datetime-local"
-                    {...field}
-                    onChange={(e) => field.onChange(new Date(e.target.value))}
-                    value={
-                      field.value instanceof Date
-                        ? field.value.toISOString().slice(0, 16)
-                        : typeof field.value === "string"
-                          ? field.value
-                          : ""
-                    }
+                  <DateTimePicker
+                    onChange={field.onChange}
+                    placeholder="Selecione data e hora de início"
+                    value={field.value}
                   />
                 </FormControl>
                 <FormMessage />
@@ -179,17 +173,10 @@ export function CreateEventForm() {
               <FormItem>
                 <FormLabel>Data e Hora de Término *</FormLabel>
                 <FormControl>
-                  <Input
-                    type="datetime-local"
-                    {...field}
-                    onChange={(e) => field.onChange(new Date(e.target.value))}
-                    value={
-                      field.value instanceof Date
-                        ? field.value.toISOString().slice(0, 16)
-                        : typeof field.value === "string"
-                          ? field.value
-                          : ""
-                    }
+                  <DateTimePicker
+                    onChange={field.onChange}
+                    placeholder="Selecione data e hora de término"
+                    value={field.value}
                   />
                 </FormControl>
                 <FormMessage />
