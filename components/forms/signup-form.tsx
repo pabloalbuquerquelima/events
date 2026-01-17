@@ -69,7 +69,7 @@ export function SignupForm({
 
     if (success) {
       toast.success(
-        `${message as string} Por favor, verifique seu e-mail para confirmação.`
+        `${message as string}`
       );
       router.push("/");
     } else {
