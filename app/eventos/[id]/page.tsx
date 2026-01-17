@@ -70,45 +70,40 @@ export default function EventDetailPage() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden pb-16">
-      {/* Hero Section com Banner */}
-      <div className="relative w-full overflow-hidden">
+      {/* Hero Section com Banner Sobreposto */}
+      <div className="relative w-full overflow-visible">
         {/* Gradient Background */}
-        <div className="h-48 w-full bg-gradient-to-r from-primary to-blue-500 sm:h-56 md:h-64 lg:h-80" />
+        <div className="h-64 w-full bg-gradient-to-r from-primary to-blue-500 sm:h-72 md:h-80 lg:h-96" />
 
         {/* Botão Voltar */}
-        <div className="container absolute top-0 right-0 left-0 z-30 mx-auto w-full max-w-6xl px-4">
-          <Button
-            className="mt-4 bg-background/80 backdrop-blur-sm"
-            onClick={() => router.push("/eventos")}
-            size="icon"
-            variant="ghost"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-        </div>
+        <Button
+          className="absolute top-4 left-4 z-30 bg-background/80 backdrop-blur-sm"
+          onClick={() => router.push("/eventos")}
+          size="icon"
+          variant="ghost"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
 
-        {/* Banner do Evento */}
-        <div className="container absolute top-0 right-0 left-0 z-20 mx-auto w-full max-w-4xl px-4 pt-16 sm:pt-20 md:pt-24">
+        {/* Banner do Evento - Sobreposto */}
+        <div className="absolute -bottom-32 left-1/2 z-20 w-full max-w-4xl -translate-x-1/2 px-4 sm:-bottom-40 md:-bottom-48 lg:-bottom-56">
           {event.bannerUrl ? (
             <img
               alt={event.title}
-              className="aspect-video w-full max-w-full rounded-lg object-cover shadow-2xl ring-1 ring-white/10 sm:rounded-xl md:rounded-2xl lg:aspect-[21/9]"
+              className="h-64 w-full max-w-full rounded-lg object-cover shadow-2xl ring-1 ring-white/10 sm:h-80 sm:rounded-xl md:h-96 md:rounded-2xl lg:h-[450px]"
               loading="lazy"
               src={event.bannerUrl ?? undefined}
             />
           ) : (
-            <div className="flex aspect-video w-full max-w-full items-center justify-center rounded-lg bg-gray-100 sm:rounded-xl md:rounded-2xl lg:aspect-[21/9]">
+            <div className="flex h-64 w-full max-w-full items-center justify-center rounded-lg bg-gray-100 shadow-2xl sm:h-80 sm:rounded-xl md:h-96 md:rounded-2xl lg:h-[450px]">
               <span className="text-muted-foreground text-sm">Sem imagem</span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Espaçador para compensar o banner absoluto */}
-      <div className="h-64 sm:h-72 md:h-80 lg:h-96" />
-
-      {/* Content */}
-      <div className="container mx-auto w-full max-w-6xl px-4 py-8 md:py-12">
+      {/* Content - com padding-top para dar espaço ao banner sobreposto */}
+      <div className="container mx-auto w-full max-w-6xl px-4 pt-36 pb-8 sm:pt-44 md:pt-52 md:pb-12 lg:pt-60">
         <div className="grid w-full gap-6 lg:grid-cols-3 lg:gap-8">
           {/* Main Content */}
           <div className="w-full min-w-0 space-y-4 lg:col-span-2 lg:space-y-6">
@@ -151,7 +146,7 @@ export default function EventDetailPage() {
                   <Calendar className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                   <div className="min-w-0 flex-1 overflow-hidden">
                     <p className="font-medium text-sm">Data</p>
-                    <p className="truncate text-muted-foreground text-sm">
+                    <p className="break-words text-muted-foreground text-sm">
                       {formatEventDate(event.startDate)}
                     </p>
                   </div>
@@ -161,7 +156,7 @@ export default function EventDetailPage() {
                   <Clock className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
                   <div className="min-w-0 flex-1 overflow-hidden">
                     <p className="font-medium text-sm">Horário</p>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="break-words text-muted-foreground text-sm">
                       {formatEventTime(event.startDate)} -{" "}
                       {formatEventTime(event.endDate)}
                     </p>
@@ -188,7 +183,7 @@ export default function EventDetailPage() {
                   <div className="min-w-0 flex-1 overflow-hidden">
                     <p className="font-medium text-sm">Vagas</p>
                     <p
-                      className={`text-sm ${
+                      className={`break-words text-sm ${
                         isFull
                           ? "font-medium text-destructive"
                           : "text-muted-foreground"
