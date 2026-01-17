@@ -90,20 +90,20 @@ export default function EventDetailPage() {
               alt={event.title}
               className="h-96 w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-[550px]"
               loading="lazy"
-              src={event.bannerUrl}
+              src={event.bannerUrl ?? undefined}
             />
           ) : (
             <div className="flex h-96 w-full items-center justify-center rounded-2xl bg-gray-100 md:h-[550px]">
               <span className="text-muted-foreground">Sem imagem</span>
             </div>
           )}
+        </div>
       </div>
 
       {/* Content: aumente o padding-top para abrir espaço para o banner sobreposto */}
       <div className="container mx-auto max-w-6xl px-4 py-8 pt-40">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
-
           <div className="space-y-4 lg:col-span-2">
             <div>
               <Badge className="mb-4">
