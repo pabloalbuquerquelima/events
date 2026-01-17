@@ -1,11 +1,11 @@
 "use server";
 
-import { db } from "@/db/index.";
-import { user } from "@/db/schema";
-import { auth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { db } from "@/db/index.";
+import { user } from "@/db/schema";
+import { auth } from "@/lib/auth";
 
 export const getCurrentUser = async () => {
   const session = await auth.api.getSession({
@@ -64,6 +64,7 @@ export const signUp = async (
         email,
         password,
         name: username,
+        role: "user",
       },
     });
 
