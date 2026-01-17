@@ -26,6 +26,8 @@ export async function testConnection() {
     await sql`SELECT 1`;
     return true;
   } catch (error) {
-    throw new Error("Erro ao conectar ao banco de dados", error);
+    throw new Error("Erro ao conectar ao banco de dados", {
+      cause: error,
+    });
   }
 }
