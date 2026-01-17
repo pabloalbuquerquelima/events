@@ -30,11 +30,11 @@ export default async function LandingPage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden px-4 pt-32 pb-20">
-        <img
-          alt=""
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover object-center"
-          src="/banner-page.png"
+        {/* BACKGROUND DESKTOP */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-20 hidden bg-center bg-cover md:block"
+          style={{ backgroundImage: "url('/banner-page.png')" }}
         />
 
         <div className="container mx-auto max-w-6xl">
@@ -49,10 +49,10 @@ export default async function LandingPage() {
             <h1 className="bg-gradient-to-r from-primary to-primary-light bg-clip-text font-bold text-3xl text-transparent tracking-tight md:text-5xl">
               Secretaria de Educação
               <br />
-              <label className="text-neutral-800">do Município de Coreaú</label>
+              <span className="text-neutral-800">do Município de Coreaú</span>
             </h1>
 
-            <p className="mx-0 max-w-xl text-muted-foreground text-xl">
+            <p className="max-w-xl text-muted-foreground text-xl">
               Excelência em educação com resultados comprovados. Melhor escola
               do Brasil e 13 escolas premiadas no SPAECE 2024.
             </p>
@@ -64,12 +64,20 @@ export default async function LandingPage() {
                   Ver Eventos
                 </Link>
               </Button>
+
               <Button asChild size="lg" variant="outline">
                 <Link href="#about">Saiba Mais</Link>
               </Button>
             </div>
           </div>
         </div>
+
+        {/* BACKGROUND MOBILE (DIV ABAIXO) */}
+        <div
+          aria-hidden
+          className="mt-16 h-64 w-full bg-center bg-cover md:hidden"
+          style={{ backgroundImage: "url('/banner-page-sm.png')" }}
+        />
       </section>
 
       {/* Stats Section */}
@@ -407,9 +415,8 @@ export default async function LandingPage() {
 
             <Button
               asChild
-              className="shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+              className="bg-white text-black shadow-xl transition-all duration-300 hover:scale-105 hover:bg-accent-foreground hover:text-white hover:shadow-2xl"
               size="lg"
-              variant="outline"
             >
               <Link href="/contato">
                 <ArrowRight className="mr-2 h-5 w-5" />

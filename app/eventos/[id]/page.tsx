@@ -46,11 +46,11 @@ export default function EventDetailPage() {
 
   if (isLoading || !event) {
     return (
-      <div className="min-h-screen pt-24 pb-16">
-        <div className="container mx-auto max-w-6xl px-4">
-          <Skeleton className="mb-8 h-96 w-full" />
-          <div className="grid gap-8 lg:grid-cols-3">
-            <div className="space-y-4 lg:col-span-2">
+      <div className="min-h-screen w-full overflow-x-hidden pt-24 pb-16">
+        <div className="container mx-auto w-full max-w-6xl px-4">
+          <Skeleton className="mb-8 h-64 w-full md:h-96" />
+          <div className="grid w-full gap-8 lg:grid-cols-3">
+            <div className="w-full space-y-4 lg:col-span-2">
               <Skeleton className="h-12 w-3/4" />
               <Skeleton className="h-24 w-full" />
             </div>
@@ -69,60 +69,67 @@ export default function EventDetailPage() {
   );
 
   return (
-    <div className="min-h-screen pb-16">
-      {/* Banner */}
-      <div className="relative h-96 w-full overflow-visible">
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-primary to-blue-500" />
+    <div className="min-h-screen w-full overflow-x-hidden pb-16">
+      {/* Hero Section com Banner */}
+      <div className="relative w-full overflow-hidden">
+        {/* Gradient Background */}
+        <div className="h-48 w-full bg-gradient-to-r from-primary to-blue-500 sm:h-56 md:h-64 lg:h-80" />
 
-        <Button
-          className="absolute top-4 left-4 z-30 bg-background/80 backdrop-blur-sm"
-          onClick={() => router.push("/eventos")}
-          size="icon"
-          variant="ghost"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
+        {/* Botão Voltar */}
+        <div className="container absolute top-0 right-0 left-0 z-30 mx-auto w-full max-w-6xl px-4">
+          <Button
+            className="mt-4 bg-background/80 backdrop-blur-sm"
+            onClick={() => router.push("/eventos")}
+            size="icon"
+            variant="ghost"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        </div>
 
-        {/* Banner do evento — fica por cima da hero */}
-        <div className="absolute -bottom-24 left-1/2 z-20 w-full max-w-4xl -translate-x-1/2 transform px-4 md:-bottom-32">
+        {/* Banner do Evento */}
+        <div className="container absolute top-0 right-0 left-0 z-20 mx-auto w-full max-w-4xl px-4 pt-16 sm:pt-20 md:pt-24">
           {event.bannerUrl ? (
             <img
               alt={event.title}
-              className="h-96 w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-[550px]"
+              className="aspect-video w-full max-w-full rounded-lg object-cover shadow-2xl ring-1 ring-white/10 sm:rounded-xl md:rounded-2xl lg:aspect-[21/9]"
               loading="lazy"
               src={event.bannerUrl ?? undefined}
             />
           ) : (
-            <div className="flex h-96 w-full items-center justify-center rounded-2xl bg-gray-100 md:h-[550px]">
-              <span className="text-muted-foreground">Sem imagem</span>
+            <div className="flex aspect-video w-full max-w-full items-center justify-center rounded-lg bg-gray-100 sm:rounded-xl md:rounded-2xl lg:aspect-[21/9]">
+              <span className="text-muted-foreground text-sm">Sem imagem</span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Content: aumente o padding-top para abrir espaço para o banner sobreposto */}
-      <div className="container mx-auto max-w-6xl px-4 py-8 pt-40">
-        <div className="grid gap-8 lg:grid-cols-3">
+      {/* Espaçador para compensar o banner absoluto */}
+      <div className="h-64 sm:h-72 md:h-80 lg:h-96" />
+
+      {/* Content */}
+      <div className="container mx-auto w-full max-w-6xl px-4 py-8 md:py-12">
+        <div className="grid w-full gap-6 lg:grid-cols-3 lg:gap-8">
           {/* Main Content */}
-          <div className="space-y-4 lg:col-span-2">
-            <div>
-              <Badge className="mb-4">
+          <div className="w-full min-w-0 space-y-4 lg:col-span-2 lg:space-y-6">
+            <div className="w-full">
+              <Badge className="mb-3 md:mb-4">
                 {getEventCategoryLabel(event.category)}
               </Badge>
-              <h1 className="mb-4 font-bold text-3xl md:text-5xl">
+              <h1 className="mb-3 w-full break-words font-bold text-2xl md:mb-4 md:text-4xl lg:text-5xl">
                 {event.title}
               </h1>
-              <p className="text-muted-foreground text-xl">
+              <p className="w-full break-words text-base text-muted-foreground md:text-lg lg:text-xl">
                 {event.description}
               </p>
             </div>
 
             {/* Registration Section */}
             {!isPast && (
-              <Card>
-                <CardContent className="pt-6">
+              <Card className="w-full">
+                <CardContent className="w-full p-4 md:p-6">
                   <RegistrationButton eventId={event.id} isFull={isFull} />
-                  <p className="mt-2 text-center text-muted-foreground text-xs">
+                  <p className="mt-2 w-full text-center text-muted-foreground text-xs">
                     Inscrições gratuitas • Vagas limitadas
                   </p>
                 </CardContent>
@@ -131,26 +138,28 @@ export default function EventDetailPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="w-full min-w-0 space-y-4 lg:space-y-6">
             {/* Informações do Evento */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Informações</CardTitle>
+            <Card className="w-full">
+              <CardHeader className="w-full">
+                <CardTitle className="text-base md:text-lg">
+                  Informações
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Calendar className="mt-0.5 h-5 w-5 text-primary" />
-                  <div className="flex-1">
+              <CardContent className="w-full space-y-4">
+                <div className="flex w-full items-start gap-3">
+                  <Calendar className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                  <div className="min-w-0 flex-1 overflow-hidden">
                     <p className="font-medium text-sm">Data</p>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="truncate text-muted-foreground text-sm">
                       {formatEventDate(event.startDate)}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <Clock className="mt-0.5 h-5 w-5 text-primary" />
-                  <div className="flex-1">
+                <div className="flex w-full items-start gap-3">
+                  <Clock className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                  <div className="min-w-0 flex-1 overflow-hidden">
                     <p className="font-medium text-sm">Horário</p>
                     <p className="text-muted-foreground text-sm">
                       {formatEventTime(event.startDate)} -{" "}
@@ -159,24 +168,24 @@ export default function EventDetailPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <MapPin className="mt-0.5 h-5 w-5 text-primary" />
-                  <div className="flex-1">
+                <div className="flex w-full items-start gap-3">
+                  <MapPin className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                  <div className="min-w-0 flex-1 overflow-hidden">
                     <p className="font-medium text-sm">Local</p>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="break-words text-muted-foreground text-sm">
                       {event.location}
                     </p>
                     {event.address && (
-                      <p className="mt-1 text-muted-foreground text-xs">
+                      <p className="mt-1 break-words text-muted-foreground text-xs">
                         {event.address}
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <Users className="mt-0.5 h-5 w-5 text-primary" />
-                  <div className="flex-1">
+                <div className="flex w-full items-start gap-3">
+                  <Users className="mt-0.5 h-5 w-5 flex-shrink-0 text-primary" />
+                  <div className="min-w-0 flex-1 overflow-hidden">
                     <p className="font-medium text-sm">Vagas</p>
                     <p
                       className={`text-sm ${
@@ -195,7 +204,9 @@ export default function EventDetailPage() {
             </Card>
 
             {/* QR Code do Evento */}
-            <EventQRCode eventId={event.id} eventTitle={event.title} />
+            <div className="w-full">
+              <EventQRCode eventId={event.id} eventTitle={event.title} />
+            </div>
           </div>
         </div>
       </div>
