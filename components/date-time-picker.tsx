@@ -1,10 +1,16 @@
 "use client";
 
-import { Calendar, Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { type ChangeEvent, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 interface DateTimePickerProps {
   value?: Date;
@@ -17,11 +23,9 @@ export function DateTimePicker({
   onChange,
   placeholder = "Selecione data e hora",
 }: DateTimePickerProps) {
-  const [open, setOpen] = React.useState(false);
-  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(
-    value
-  );
-  const [timeValue, setTimeValue] = React.useState<string>(() => {
+  const [open, setOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(value);
+  const [timeValue, setTimeValue] = useState<string>(() => {
     if (value) {
       const hours = value.getHours().toString().padStart(2, "0");
       const minutes = value.getMinutes().toString().padStart(2, "0");
@@ -30,7 +34,7 @@ export function DateTimePicker({
     return "12:00";
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (value) {
       setSelectedDate(value);
       const hours = value.getHours().toString().padStart(2, "0");
@@ -54,7 +58,7 @@ export function DateTimePicker({
     onChange?.(newDate);
   };
 
-  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const time = e.target.value;
     setTimeValue(time);
 
