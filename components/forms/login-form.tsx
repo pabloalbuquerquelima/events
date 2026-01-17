@@ -31,7 +31,7 @@ import { signIn } from "@/server/users";
 import { Badge } from "../ui/badge";
 
 const formSchema = z.object({
-  email: z.string().email(),
+  email: z.string(),
   password: z.string().min(8),
 });
 
@@ -78,8 +78,8 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Login with your Google account</CardDescription>
+          <CardTitle className="text-xl">Bem-vindo de volta</CardTitle>
+          <CardDescription>Faça login com sua conta Google</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -99,17 +99,17 @@ export function LoginForm({
                         fill="currentColor"
                       />
                     </svg>
-                    Login with Google
+                    Entrar com Google
                     {lastMethod === "google" && (
                       <Badge className="absolute right-2 text-[9px]">
-                        last used
+                        Último usado
                       </Badge>
                     )}
                   </Button>
                 </div>
                 <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-border after:border-t">
                   <span className="relative z-10 bg-card px-2 text-muted-foreground">
-                    Or continue with
+                    Ou continuar com
                   </span>
                 </div>
                 <div className="grid gap-6">
@@ -120,14 +120,14 @@ export function LoginForm({
                       render={({ field }) => (
                         <FormItem>
                           <div className="flex items-center justify-between">
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>E-mail</FormLabel>
 
                             {lastMethod === "email" && (
-                              <Badge className="text-[9px]">last used</Badge>
+                              <Badge className="text-[9px]">último usado</Badge>
                             )}
                           </div>
                           <FormControl>
-                            <Input placeholder="m@example.com" {...field} />
+                            <Input placeholder="seu@exemplo.com" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -141,7 +141,7 @@ export function LoginForm({
                         name="password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Password</FormLabel>
+                            <FormLabel>Senha</FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="********"
@@ -153,26 +153,23 @@ export function LoginForm({
                           </FormItem>
                         )}
                       />
-                      <Link
-                        className="ml-auto text-sm underline-offset-4 hover:underline"
-                        href="/forgot-password"
-                      >
-                        Forgot your password?
-                      </Link>
+                      <span className="ml-auto text-sm underline-offset-4 hover:underline">
+                        Esqueceu sua senha?
+                      </span>
                     </div>
                   </div>
                   <Button className="w-full" disabled={isLoading} type="submit">
                     {isLoading ? (
                       <Loader2 className="size-4 animate-spin" />
                     ) : (
-                      "Login"
+                      "Entrar"
                     )}
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  Don&apos;t have an account?{" "}
+                  Não possui uma conta?{" "}
                   <Link className="underline underline-offset-4" href="/signup">
-                    Sign up
+                    Cadastre-se
                   </Link>
                 </div>
               </div>
@@ -181,9 +178,9 @@ export function LoginForm({
         </CardContent>
       </Card>
       <div className="text-balance text-center text-muted-foreground text-xs *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary">
-        By clicking continue, you agree to our{" "}
-        <Link href="#">Terms of Service</Link> and{" "}
-        <Link href="#">Privacy Policy</Link>.
+        Ao clicar em continuar, você concorda com nossos{" "}
+        <Link href="#">Termos de Serviço</Link> e{" "}
+        <Link href="#">Política de Privacidade</Link>.
       </div>
     </div>
   );

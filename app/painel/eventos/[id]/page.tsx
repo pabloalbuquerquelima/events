@@ -24,11 +24,11 @@ import { getEventRegistrations } from "@/server/registrations";
 
 async function isAdmin() {
   try {
-    const { success } = await auth.api.hasPermission({
+    const { success } = await auth.api.userHasPermission({
       headers: await headers(),
       body: {
         permissions: {
-          organization: ["update", "delete"],
+          user: ["update", "delete"],
         },
       },
     });

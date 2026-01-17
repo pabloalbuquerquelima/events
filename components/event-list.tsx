@@ -8,6 +8,7 @@ interface EventListProps {
   isAdmin?: boolean;
   emptyMessage?: string;
   onEdit?: (eventId: string) => void;
+  onViewParticipants?: (eventId: string) => void;
   onDelete?: (eventId: string) => void;
 }
 
@@ -16,6 +17,7 @@ export function EventList({
   isAdmin,
   emptyMessage = "Nenhum evento encontrado.",
   onEdit,
+  onViewParticipants,
   onDelete,
 }: EventListProps) {
   if (events.length === 0) {
@@ -35,6 +37,7 @@ export function EventList({
           key={event.id}
           onDelete={onDelete}
           onEdit={onEdit}
+          onViewParticipants={onViewParticipants}
         />
       ))}
     </div>

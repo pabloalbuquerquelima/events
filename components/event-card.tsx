@@ -24,6 +24,7 @@ interface EventCardProps {
   event: Event;
   isAdmin?: boolean;
   onEdit?: (eventId: string) => void;
+  onViewParticipants?: (eventId: string) => void;
   onDelete?: (eventId: string) => void;
 }
 
@@ -31,6 +32,7 @@ export function EventCard({
   event,
   isAdmin,
   onEdit,
+  onViewParticipants,
   onDelete,
 }: EventCardProps) {
   const availableSpots = calculateAvailableSpots(
@@ -102,6 +104,15 @@ export function EventCard({
             >
               <Edit className="mr-1 h-4 w-4" />
               Editar
+            </Button>
+            <Button
+              className="flex-1"
+              onClick={() => onViewParticipants?.(event.id)}
+              size="sm"
+              variant="outline"
+            >
+              <Users className="mr-1 h-4 w-4" />
+              Ver Participantes
             </Button>
             <Button
               onClick={() => onDelete?.(event.id)}

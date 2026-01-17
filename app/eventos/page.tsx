@@ -44,7 +44,7 @@ export default function EventosPage() {
   };
 
   return (
-    <div className="min-h-screen px-4  pb-16">
+    <div className="min-h-screen px-4 pt-10 pb-16">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-12 space-y-4 text-center">

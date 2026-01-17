@@ -3,8 +3,12 @@ import {
   Award,
   BookOpen,
   Calendar,
+  GraduationCap,
+  Sparkles,
+  Star,
   TrendingUp,
   Trophy,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -26,32 +30,36 @@ export default async function LandingPage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden px-4 pt-32 pb-20">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-background to-secondary/10" />
+        <img
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover object-center"
+          src="/banner-page.png"
+        />
+
         <div className="container mx-auto max-w-6xl">
-          <div className="animate-fade-in space-y-6 text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">
+          <div className="animate-fade-in space-y-6 text-left">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2">
               <Trophy className="h-5 w-5 text-primary" />
               <span className="font-medium text-primary text-sm">
                 1º lugar no IDEB Brasil 2023
               </span>
             </div>
 
-            <h1 className="font-bold text-4xl tracking-tight md:text-6xl">
+            <h1 className="bg-gradient-to-r from-primary to-primary-light bg-clip-text font-bold text-3xl text-transparent tracking-tight md:text-5xl">
               Secretaria de Educação
               <br />
-              <span className="bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
-                Coreaú
-              </span>
+              <label className="text-neutral-800">do Município de Coreaú</label>
             </h1>
 
-            <p className="mx-auto max-w-2xl text-muted-foreground text-xl">
+            <p className="mx-0 max-w-xl text-muted-foreground text-xl">
               Excelência em educação com resultados comprovados. Melhor escola
               do Brasil e 13 escolas premiadas no SPAECE 2024.
             </p>
 
-            <div className="flex flex-col justify-center gap-4 pt-4 sm:flex-row">
+            <div className="flex flex-col items-start gap-4 pt-4 sm:flex-row">
               <Button asChild size="lg">
-                <Link href="/eventos">
+                <Link className="flex items-center" href="/eventos">
                   <Calendar className="mr-2 h-5 w-5" />
                   Ver Eventos
                 </Link>
@@ -193,7 +201,7 @@ export default async function LandingPage() {
 
             <Card>
               <CardHeader>
-                <Award className="mb-4 h-10 w-10 text-secondary" />
+                <Award className="mb-4 h-10 w-10 text-primary" />
                 <CardTitle>Inovação</CardTitle>
               </CardHeader>
               <CardContent>
@@ -214,6 +222,200 @@ export default async function LandingPage() {
                 </CardDescription>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* NOVA SEÇÃO: Timeline de Evolução */}
+      <section className="relative overflow-hidden px-4 py-20">
+        {/* Padrão de fundo decorativo */}
+        <div className="pointer-events-none absolute inset-0 opacity-5">
+          <div className="absolute top-0 left-1/4 h-96 w-96 rounded-full bg-primary blur-3xl" />
+          <div className="absolute right-1/4 bottom-0 h-96 w-96 rounded-full bg-secondary blur-3xl" />
+        </div>
+
+        <div className="container relative mx-auto max-w-6xl">
+          <div className="mb-16 text-center">
+            <Badge className="mb-4" variant="outline">
+              <TrendingUp className="mr-2 h-4 w-4" />
+              Nossa Trajetória
+            </Badge>
+            <h2 className="mb-4 font-bold text-3xl md:text-4xl">
+              Evolução Contínua
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              Uma jornada de conquistas e crescimento constante
+            </p>
+          </div>
+
+          <div className="relative">
+            {/* Linha central vertical */}
+            <div className="absolute top-0 bottom-0 left-1/2 w-1 -translate-x-1/2 bg-gradient-to-b from-primary via-secondary to-primary" />
+
+            <div className="space-y-12">
+              {/* Item 1 */}
+              <div className="relative flex items-center gap-8">
+                <div className="flex-1 text-right">
+                  <Card className="ml-auto max-w-md border-primary/20 bg-white">
+                    <CardHeader>
+                      <CardTitle>2020</CardTitle>
+                      <CardDescription>Início da Transformação</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground text-sm">
+                        Implementação de novas metodologias e modernização da
+                        infraestrutura educacional.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary shadow-lg ring-4 ring-white">
+                  <Sparkles className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex-1" />
+              </div>
+
+              {/* Item 2 */}
+              <div className="relative flex items-center gap-8">
+                <div className="flex-1" />
+                <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-secondary to-primary shadow-lg ring-4 ring-white">
+                  <Users className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <Card className="mr-auto max-w-md border-secondary/20 bg-white">
+                    <CardHeader>
+                      <CardTitle>2021</CardTitle>
+                      <CardDescription>Capacitação em Massa</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground text-sm">
+                        Programa intensivo de formação para mais de 300
+                        professores e gestores escolares.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Item 3 */}
+              <div className="relative flex items-center gap-8">
+                <div className="flex-1 text-right">
+                  <Card className="ml-auto max-w-md border-primary/20 bg-white">
+                    <CardHeader>
+                      <CardTitle>2022</CardTitle>
+                      <CardDescription>Primeiras Conquistas</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground text-sm">
+                        Reconhecimento estadual com 7 escolas premiadas no
+                        SPAECE.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-secondary shadow-lg ring-4 ring-white">
+                  <Award className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex-1" />
+              </div>
+
+              {/* Item 4 */}
+              <div className="relative flex items-center gap-8">
+                <div className="flex-1" />
+                <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg ring-4 ring-white">
+                  <Trophy className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <Card className="mr-auto max-w-md border-amber-500/20 bg-white">
+                    <CardHeader>
+                      <CardTitle>2023</CardTitle>
+                      <CardDescription>Topo do Brasil</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground text-sm">
+                        1º lugar nacional no IDEB, colocando Coreaú no mapa da
+                        educação brasileira.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Item 5 */}
+              <div className="relative flex items-center gap-8">
+                <div className="flex-1 text-right">
+                  <Card className="ml-auto max-w-md border-emerald-500/20 bg-white">
+                    <CardHeader>
+                      <CardTitle>2024</CardTitle>
+                      <CardDescription>Expansão do Sucesso</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground text-sm">
+                        13 escolas premiadas no SPAECE, consolidando nossa
+                        liderança educacional.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-green-600 shadow-lg ring-4 ring-white">
+                  <Star className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex-1" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* NOVA SEÇÃO: Call to Action com efeitos visuais */}
+      <section className="relative overflow-hidden px-4 py-24">
+        <img
+          alt=""
+          className="absolute top-0 left-0 h-full w-full object-cover"
+          src="/banner-page-final.png"
+        />
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute top-0 left-0 h-full w-1/3 bg-gradient-to-r from-primary/5 to-transparent" />
+          <div className="absolute top-0 right-0 h-full w-1/3 bg-gradient-to-l from-secondary/5 to-transparent" />
+        </div>
+
+        <div className="container relative mx-auto max-w-4xl text-center">
+          <div className="inline-block animate-pulse rounded-full bg-primary/10 p-4">
+            <GraduationCap className="h-12 w-12 text-primary" />
+          </div>
+
+          <h2 className="mt-8 mb-6 font-bold text-3xl md:text-5xl">
+            Faça Parte dessa Transformação
+          </h2>
+
+          <p className="mb-10 text-lg text-muted-foreground md:text-xl">
+            Junte-se a nós na construção de um futuro melhor através da
+            educação. Acompanhe nossos eventos, programas e iniciativas.
+          </p>
+
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Button
+              asChild
+              className="shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+              size="lg"
+            >
+              <Link href="/eventos">
+                <Calendar className="mr-2 h-5 w-5" />
+                Explore Nossos Eventos
+              </Link>
+            </Button>
+
+            <Button
+              asChild
+              className="shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+              size="lg"
+              variant="outline"
+            >
+              <Link href="/contato">
+                <ArrowRight className="mr-2 h-5 w-5" />
+                Entre em Contato
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

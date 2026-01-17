@@ -1,11 +1,13 @@
 import { relations } from "drizzle-orm";
 import {
   boolean,
+  index,
   integer,
   pgEnum,
   pgTable,
   text,
   timestamp,
+  unique,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -176,6 +178,47 @@ export const waitlist = pgTable("waitlist", {
 });
 
 /* =======================
+ * INFORMAÇÕES DOS PARTICIPANTES
+ * ======================= */
+
+export const participantInfo = pgTable(
+  "participant_info",
+  {
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+
+    registrationId: text("registration_id")
+      .notNull()
+      .references(() => registration.id, { onDelete: "cascade" }),
+
+    name: text("name").notNull(),
+    cpf: text("cpf").notNull(),
+    municipality: text("municipality").notNull(),
+    state: text("state").notNull(),
+    contact: text("contact").notNull(),
+    email: text("email").notNull(),
+
+    createdAt: timestamp("created_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .$defaultFn(() => new Date())
+      .notNull(),
+  },
+  (table) => ({
+    // Unique constraint - cada registration só pode ter um participantInfo
+    uniqueRegistration: unique().on(table.registrationId),
+    // Índices para melhorar performance de queries
+    registrationIdx: index("idx_participant_info_registration").on(
+      table.registrationId
+    ),
+    cpfIdx: index("idx_participant_info_cpf").on(table.cpf),
+    emailIdx: index("idx_participant_info_email").on(table.email),
+  })
+);
+
+/* =======================
  * RELATIONS
  * ======================= */
 
@@ -197,7 +240,22 @@ export const registrationRelations = relations(registration, ({ one }) => ({
     fields: [registration.userId],
     references: [user.id],
   }),
+  // ✅ NOVA RELAÇÃO: 1:1 com participantInfo
+  participantInfo: one(participantInfo, {
+    fields: [registration.id],
+    references: [participantInfo.registrationId],
+  }),
 }));
+
+export const participantInfoRelations = relations(
+  participantInfo,
+  ({ one }) => ({
+    registration: one(registration, {
+      fields: [participantInfo.registrationId],
+      references: [registration.id],
+    }),
+  })
+);
 
 export const waitlistRelations = relations(waitlist, ({ one }) => ({
   event: one(event, {
@@ -210,6 +268,10 @@ export const waitlistRelations = relations(waitlist, ({ one }) => ({
   }),
 }));
 
+/* =======================
+ * TYPES
+ * ======================= */
+
 export type Event = typeof event.$inferSelect;
 export type NewEvent = typeof event.$inferInsert;
 
@@ -219,6 +281,13 @@ export type NewRegistration = typeof registration.$inferInsert;
 export type Waitlist = typeof waitlist.$inferSelect;
 export type NewWaitlist = typeof waitlist.$inferInsert;
 
+export type ParticipantInfo = typeof participantInfo.$inferSelect;
+export type NewParticipantInfo = typeof participantInfo.$inferInsert;
+
+/* =======================
+ * SCHEMA EXPORT
+ * ======================= */
+
 export const schema = {
   user,
   session,
@@ -227,7 +296,9 @@ export const schema = {
   event,
   registration,
   waitlist,
+  participantInfo, 
   eventRelations,
   registrationRelations,
   waitlistRelations,
+  participantInfoRelations,
 };

@@ -35,6 +35,20 @@ CREATE TABLE "event" (
 	"updated_at" timestamp NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "participant_info" (
+	"id" text PRIMARY KEY NOT NULL,
+	"registration_id" text NOT NULL,
+	"name" text NOT NULL,
+	"cpf" text NOT NULL,
+	"municipality" text NOT NULL,
+	"state" text NOT NULL,
+	"contact" text NOT NULL,
+	"email" text NOT NULL,
+	"created_at" timestamp NOT NULL,
+	"updated_at" timestamp NOT NULL,
+	CONSTRAINT "participant_info_registration_id_unique" UNIQUE("registration_id")
+);
+--> statement-breakpoint
 CREATE TABLE "registration" (
 	"id" text PRIMARY KEY NOT NULL,
 	"event_id" text NOT NULL,
@@ -95,8 +109,12 @@ CREATE TABLE "waitlist" (
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "event" ADD CONSTRAINT "event_created_by_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "participant_info" ADD CONSTRAINT "participant_info_registration_id_registration_id_fk" FOREIGN KEY ("registration_id") REFERENCES "public"."registration"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "registration" ADD CONSTRAINT "registration_event_id_event_id_fk" FOREIGN KEY ("event_id") REFERENCES "public"."event"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "registration" ADD CONSTRAINT "registration_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "waitlist" ADD CONSTRAINT "waitlist_event_id_event_id_fk" FOREIGN KEY ("event_id") REFERENCES "public"."event"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "waitlist" ADD CONSTRAINT "waitlist_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "waitlist" ADD CONSTRAINT "waitlist_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "idx_participant_info_registration" ON "participant_info" USING btree ("registration_id");--> statement-breakpoint
+CREATE INDEX "idx_participant_info_cpf" ON "participant_info" USING btree ("cpf");--> statement-breakpoint
+CREATE INDEX "idx_participant_info_email" ON "participant_info" USING btree ("email");

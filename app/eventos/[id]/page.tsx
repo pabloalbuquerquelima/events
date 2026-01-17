@@ -71,30 +71,35 @@ export default function EventDetailPage() {
   return (
     <div className="min-h-screen pb-16">
       {/* Banner */}
-      <div className="relative h-96 w-full">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-500 to-transparent" />
+      <div className="relative h-96 w-full overflow-visible">
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-primary to-blue-500" />
 
         <Button
-          className="absolute top-4 left-4 bg-background/80 backdrop-blur-sm"
+          className="absolute top-4 left-4 z-30 bg-background/80 backdrop-blur-sm"
           onClick={() => router.push("/eventos")}
           size="icon"
           variant="ghost"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
+
+        {/* Banner do evento — fica por cima da hero */}
+        <div className="absolute -bottom-24 left-1/2 z-20 w-full max-w-4xl -translate-x-1/2 transform px-4 md:-bottom-32">
+          <img
+            alt={event.title}
+            className="h-96 w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-[550px]"
+            loading="lazy"
+            src={event.bannerUrl}
+          />
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="container mx-auto max-w-6xl px-4 py-8">
+      {/* Content: aumente o padding-top para abrir espaço para o banner sobreposto */}
+      <div className="container mx-auto max-w-6xl px-4 py-8 pt-40">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Content */}
 
           <div className="space-y-4 lg:col-span-2">
-            <img
-              alt={event.title}
-              className="object-cover"
-              src={event.bannerUrl}
-            />
             <div>
               <Badge className="mb-4">
                 {getEventCategoryLabel(event.category)}

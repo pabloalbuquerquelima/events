@@ -15,6 +15,20 @@ export interface Registration {
   createdAt: Date | string;
   updatedAt: Date | string;
   event?: Event;
+  participantInfo?: ParticipantInfo;
+}
+
+export interface ParticipantInfo {
+  id: string;
+  registrationId: string;
+  name: string;
+  cpf: string;
+  municipality: string;
+  state: string;
+  contact: string;
+  email: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
 
 export interface Waitlist {
@@ -85,7 +99,18 @@ export function useRegistrations() {
     }
   };
 
-  const registerForEvent = async (eventId: string, attendeesCount = 1) => {
+  const registerForEvent = async (
+    eventId: string,
+    attendeesCount = 1,
+    participantData?: {
+      name: string;
+      cpf: string;
+      municipality: string;
+      state: string;
+      contact: string;
+      email: string;
+    }
+  ) => {
     try {
       setIsLoading(true);
       const response = await fetch("/api/registrations", {
@@ -93,7 +118,7 @@ export function useRegistrations() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ eventId, attendeesCount }),
+        body: JSON.stringify({ eventId, attendeesCount, participantData }),
       });
 
       const data = await response.json();

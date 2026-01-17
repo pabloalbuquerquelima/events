@@ -2,8 +2,8 @@
 
 import {
   Calendar,
-  GraduationCap,
   Home,
+  LayoutDashboard,
   LogOut,
   Menu,
   User,
@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAdmin } from "@/hooks/use-admin";
 import { authClient } from "@/lib/auth-client";
 
 const menuItems = [
@@ -34,6 +35,7 @@ export default function Topbar() {
   const router = useRouter();
 
   const { data: session } = authClient.useSession();
+  const { isAdmin } = useAdmin();
   const user = session?.user;
 
   const handleLogout = async () => {
@@ -59,6 +61,7 @@ export default function Topbar() {
   return (
     <header className="sticky top-0 z-50 flex h-16 items-center border-border border-b bg-background">
       <div className="container mx-auto px-4 sm:px-6">
+        {/* Linha principal com 3 colunas: left / center / right */}
         <div className="flex h-16 items-center justify-between">
           {/* Logo e Menu Mobile */}
           <div className="flex items-center gap-2 sm:gap-4">
@@ -119,6 +122,24 @@ export default function Topbar() {
                             <Calendar className="h-5 w-5" />
                             Minhas Inscrições
                           </Button>
+
+                          {/* NOVO: Painel de Eventos para Admin */}
+                          {isAdmin && (
+                            <Button
+                              className="h-11 w-full justify-start gap-3"
+                              onClick={() =>
+                                navigateAndClose("/painel/eventos")
+                              }
+                              variant={
+                                pathname.startsWith("/painel/eventos")
+                                  ? "secondary"
+                                  : "ghost"
+                              }
+                            >
+                              <LayoutDashboard className="h-5 w-5" />
+                              Painel de Eventos
+                            </Button>
+                          )}
                         </>
                       )}
                     </div>
@@ -132,55 +153,72 @@ export default function Topbar() {
               className="flex items-center gap-2 transition-opacity hover:opacity-80"
               href="/"
             >
-              <GraduationCap className="h-8 w-8 text-primary" />
-              <div className="flex flex-col">
-                <span className="font-bold text-lg leading-tight">SEDUC</span>
-                <span className="text-muted-foreground text-xs">Coreaú</span>
-              </div>
+              <img
+                alt="Logo"
+                className="h-x w-auto object-contain"
+                src="/logo-topbar.png"
+              />
             </Link>
           </div>
 
           {/* Menu Desktop */}
-          <nav className="hidden items-center gap-6 lg:flex">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              return (
+          <div className="flex items-center gap-12">
+            <nav className="hidden h-full items-center gap-6 lg:flex">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    className={`flex h-full items-center gap-2 font-medium text-sm leading-none transition-colors hover:text-primary ${
+                      isActive(item.href)
+                        ? "text-primary"
+                        : "text-foreground/60"
+                    }`}
+                    href={item.href}
+                    key={item.href}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </Link>
+                );
+              })}
+
+              {user && (
                 <Link
-                  className={`flex items-center gap-2 font-medium text-sm transition-colors hover:text-primary ${
-                    isActive(item.href) ? "text-primary" : "text-foreground/60"
+                  className={`flex h-full items-center gap-2 font-medium text-sm leading-none transition-colors hover:text-primary ${
+                    isActive("/painel/minhas-inscricoes")
+                      ? "text-primary"
+                      : "text-foreground/60"
                   }`}
-                  href={item.href}
-                  key={item.href}
+                  href="/painel/minhas-inscricoes"
                 >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
+                  <Calendar className="h-4 w-4" />
+                  Minhas Inscrições
                 </Link>
-              );
-            })}
+              )}
 
-            {user && (
-              <Link
-                className={`flex items-center gap-2 font-medium text-sm transition-colors hover:text-primary ${
-                  isActive("/painel/minhas-inscricoes")
-                    ? "text-primary"
-                    : "text-foreground/60"
-                }`}
-                href="/painel/minhas-inscricoes"
-              >
-                <Calendar className="h-4 w-4" />
-                Minhas Inscrições
-              </Link>
-            )}
-          </nav>
+              {/* NOVO: Painel de Eventos para Admin no Desktop */}
+              {isAdmin && (
+                <Link
+                  className={`flex h-full items-center gap-2 font-medium text-sm leading-none transition-colors hover:text-primary ${
+                    pathname.startsWith("/painel/eventos")
+                      ? "text-primary"
+                      : "text-foreground/60"
+                  }`}
+                  href="/painel/eventos"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  Painel de Eventos
+                </Link>
+              )}
+            </nav>
 
-          {/* User Menu */}
-          <div className="flex items-center gap-2">
+            {/* User Menu */}
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     aria-label="Abrir menu do usuário"
-                    className="rounded-full"
+                    className="rounded-full p-0"
                     size="icon"
                     variant="ghost"
                   >
@@ -218,6 +256,16 @@ export default function Topbar() {
                       Minhas Inscrições
                     </Link>
                   </DropdownMenuItem>
+
+                  {/* NOVO: Painel de Eventos no dropdown */}
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/painel/eventos">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        Painel de Eventos
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
 
                   <DropdownMenuSeparator />
 

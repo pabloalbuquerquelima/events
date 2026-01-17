@@ -1,12 +1,12 @@
 "use server";
 
-import { db } from "@/db/index.";
-import { event, registration, waitlist } from "@/db/schema";
-import { auth } from "@/lib/auth";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
+import { db } from "@/db/index.";
+import { event, participantInfo, registration, waitlist } from "@/db/schema";
+import { auth } from "@/lib/auth";
 
 // ==========================================
 // HELPERS
@@ -30,7 +30,7 @@ async function isAdmin() {
       headers: await headers(),
       body: {
         permissions: {
-          organization: ["update", "delete"],
+          user: ["update", "delete"],
         },
       },
     });
@@ -69,6 +69,7 @@ export async function getUserRegistrations() {
       where: eq(registration.userId, user.id),
       with: {
         event: true,
+        participantInfo: true,
       },
       orderBy: [desc(registration.createdAt)],
     });
@@ -104,6 +105,7 @@ export async function getEventRegistrations(eventId: string) {
       where: eq(registration.eventId, eventId),
       with: {
         user: true,
+        participantInfo: true,
       },
       orderBy: [asc(registration.createdAt)],
     });
@@ -132,6 +134,7 @@ export async function getRegistrationById(registrationId: string) {
       with: {
         event: true,
         user: true,
+        participantInfo: true,
       },
     });
 
@@ -208,9 +211,30 @@ export async function checkUserRegistration(eventId: string) {
 // MUTATIONS - Criar/Cancelar Inscrições
 // ==========================================
 
-export async function registerForEvent(eventId: string, attendeesCount = 1) {
+export async function registerForEvent(
+  eventId: string,
+  attendeesCount = 1,
+  participantData?: {
+    name: string;
+    cpf: string;
+    municipality: string;
+    state: string;
+    contact: string;
+    email: string;
+  }
+) {
   try {
     const user = await getCurrentUser();
+
+    // Validar que os dados do participante foram fornecidos
+    if (!participantData) {
+      return {
+        success: false,
+        registration: null,
+        waitlist: null,
+        error: "Participant information is required.",
+      };
+    }
 
     // Verificar se o evento existe
     const eventData = await db.query.event.findFirst({
@@ -223,16 +247,6 @@ export async function registerForEvent(eventId: string, attendeesCount = 1) {
         registration: null,
         waitlist: null,
         error: "Event not found.",
-      };
-    }
-
-    // Verificar se o evento está publicado
-    if (eventData.status !== "published") {
-      return {
-        success: false,
-        registration: null,
-        waitlist: null,
-        error: "Event is not available for registration.",
       };
     }
 
@@ -288,6 +302,19 @@ export async function registerForEvent(eventId: string, attendeesCount = 1) {
         })
         .returning();
 
+      // Criar informações do participante
+      await db.insert(participantInfo).values({
+        registrationId: newRegistration[0].id,
+        name: participantData.name,
+        cpf: participantData.cpf,
+        municipality: participantData.municipality,
+        state: participantData.state,
+        contact: participantData.contact,
+        email: participantData.email,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
       // Atualizar contador de participantes
       await db
         .update(event)
@@ -305,6 +332,7 @@ export async function registerForEvent(eventId: string, attendeesCount = 1) {
         error: null,
       };
     }
+
     // Sem vagas - adicionar à lista de espera
     const currentWaitlistCount = await db
       .select({ count: sql<number>`count(*)` })

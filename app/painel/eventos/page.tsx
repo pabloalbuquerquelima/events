@@ -56,6 +56,10 @@ export default function EventosAdminPage() {
     }
   };
 
+  const handleViewParticipants = (eventId: string) => {
+    router.push(`/painel/eventos/${eventId}/participantes`);
+  };
+
   if (isCheckingAdmin) {
     return (
       <div className="min-h-screen px-4 pt-24 pb-16">
@@ -116,6 +120,7 @@ export default function EventosAdminPage() {
                 isAdmin
                 onDelete={handleDelete}
                 onEdit={handleEdit}
+                onViewParticipants={handleViewParticipants}
               />
             )}
           </TabsContent>
@@ -134,6 +139,7 @@ export default function EventosAdminPage() {
                 isAdmin
                 onDelete={handleDelete}
                 onEdit={handleEdit}
+                onViewParticipants={handleViewParticipants}
               />
             )}
           </TabsContent>
@@ -152,6 +158,7 @@ export default function EventosAdminPage() {
                 isAdmin
                 onDelete={handleDelete}
                 onEdit={handleEdit}
+                onViewParticipants={handleViewParticipants}
               />
             )}
           </TabsContent>
