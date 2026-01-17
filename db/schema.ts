@@ -296,7 +296,7 @@ export const schema = {
   event,
   registration,
   waitlist,
-  participantInfo, 
+  participantInfo,
   eventRelations,
   registrationRelations,
   waitlistRelations,
