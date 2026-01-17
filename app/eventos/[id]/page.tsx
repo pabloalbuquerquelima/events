@@ -85,13 +85,18 @@ export default function EventDetailPage() {
 
         {/* Banner do evento — fica por cima da hero */}
         <div className="absolute -bottom-24 left-1/2 z-20 w-full max-w-4xl -translate-x-1/2 transform px-4 md:-bottom-32">
-          <img
-            alt={event.title}
-            className="h-96 w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-[550px]"
-            loading="lazy"
-            src={event.bannerUrl}
-          />
-        </div>
+          {event.bannerUrl ? (
+            <img
+              alt={event.title}
+              className="h-96 w-full rounded-2xl object-cover shadow-2xl ring-1 ring-white/10 md:h-[550px]"
+              loading="lazy"
+              src={event.bannerUrl}
+            />
+          ) : (
+            <div className="flex h-96 w-full items-center justify-center rounded-2xl bg-gray-100 md:h-[550px]">
+              <span className="text-muted-foreground">Sem imagem</span>
+            </div>
+          )}
       </div>
 
       {/* Content: aumente o padding-top para abrir espaço para o banner sobreposto */}
