@@ -1,4 +1,10 @@
-import { Award, Trophy } from "lucide-react";
+import {
+  Award,
+  Bookmark,
+  BookOpenCheck,
+  CircleStar,
+  Trophy,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
@@ -84,9 +90,35 @@ export default function Footer() {
               </span>
             </div>
             <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-4 py-3">
+              <CircleStar className="h-5 w-5 text-primary" />
+              <span className="text-muted-foreground text-sm">
+                1º Lugar do Ceará no SPAECE 2024 no 2º e 5º Ano do Ensino
+                Fundamental
+              </span>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-4 py-3">
+              <BookOpenCheck className="h-5 w-5 text-primary" />
+              <span className="text-muted-foreground text-sm">
+                Município com 100% das Crianças Alfabetizadas no ICA.
+              </span>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-4 py-3">
+              <Trophy className="h-5 w-5 text-primary" />
+              <span className="text-muted-foreground text-sm">
+                1º lugar no IDEB Brasil
+              </span>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-4 py-3">
               <Award className="h-5 w-5 text-primary" />
               <span className="text-muted-foreground text-sm">
                 13 escolas premiadas SPAECE
+              </span>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-4 py-3">
+              <Bookmark className="h-5 w-5 text-primary" />
+              <span className="text-muted-foreground text-sm">
+                Município reconhecido com o Selo Petronilha Beatriz pela
+                garantia da Equidade Racial.
               </span>
             </div>
           </div>
