@@ -40,12 +40,14 @@ export default function Topbar() {
 
   const handleLogout = async () => {
     try {
-      await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => router.push("/login"),
-          onError: (ctx) => console.error("Erro ao fazer logout:", ctx.error),
-        },
-      });
+      const { error } = await authClient.signOut();
+
+      if (error) {
+        console.error("Erro ao fazer logout:", error);
+        return;
+      }
+
+      router.push("/login");
     } catch (error) {
       console.error("Erro no logout:", error);
     }

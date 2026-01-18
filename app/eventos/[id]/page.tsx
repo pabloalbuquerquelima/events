@@ -90,12 +90,12 @@ export default function EventDetailPage() {
           {event.bannerUrl ? (
             <img
               alt={event.title}
-              className="h-64 w-full max-w-full rounded-lg object-cover  ring-1 ring-white/10 sm:h-80 sm:rounded-xl md:h-96 md:rounded-2xl lg:h-[450px]"
+              className="h-64 w-full max-w-full rounded-lg object-cover ring-1 ring-white/10 sm:h-80 sm:rounded-xl md:h-96 md:rounded-2xl lg:h-[450px]"
               loading="lazy"
               src={event.bannerUrl ?? undefined}
             />
           ) : (
-            <div className="flex h-64 w-full max-w-full items-center justify-center rounded-lg bg-gray-100  sm:h-80 sm:rounded-xl md:h-96 md:rounded-2xl lg:h-[450px]">
+            <div className="flex h-64 w-full max-w-full items-center justify-center rounded-lg bg-gray-100 sm:h-80 sm:rounded-xl md:h-96 md:rounded-2xl lg:h-[450px]">
               <span className="text-muted-foreground text-sm">Sem imagem</span>
             </div>
           )}
@@ -114,7 +114,7 @@ export default function EventDetailPage() {
               <h1 className="mb-3 w-full break-words font-bold text-2xl md:mb-4 md:text-4xl lg:text-5xl">
                 {event.title}
               </h1>
-              <p className="w-full break-words whitespace-pre-wrap text-muted-foreground text-base md:text-lg lg:text-xl">
+              <p className="w-full whitespace-pre-wrap break-words text-base text-muted-foreground md:text-lg lg:text-xl">
                 {event.description}
               </p>
             </div>
