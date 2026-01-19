@@ -54,7 +54,7 @@ export function SignupForm({
   const signInWithGoogle = async () => {
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/",
+      callbackURL: "/eventos",
     });
   };
 
@@ -71,7 +71,8 @@ export function SignupForm({
       toast.success(
         `${message as string}`
       );
-      router.push("/");
+      router.refresh();
+      router.push("/eventos");
     } else {
       toast.error(message as string);
     }

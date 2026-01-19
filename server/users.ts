@@ -1,11 +1,11 @@
 "use server";
 
-import { db } from "@/db/index.";
-import { user } from "@/db/schema";
-import { auth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { db } from "@/db/index.";
+import { user } from "@/db/schema";
+import { auth } from "@/lib/auth";
 
 export const getCurrentUser = async () => {
   const session = await auth.api.getSession({
@@ -41,14 +41,14 @@ export const signIn = async (email: string, password: string) => {
 
     return {
       success: true,
-      message: "Signed in successfully.",
+      message: "Login realizado com sucesso!",
     };
   } catch (error) {
     const e = error as Error;
 
     return {
       success: false,
-      message: e.message || "An unknown error occurred.",
+      message: e.message || "Erro ao realizar login.",
     };
   }
 };
@@ -69,14 +69,14 @@ export const signUp = async (
 
     return {
       success: true,
-      message: "Signed up successfully.",
+      message: "Login realizado com sucesso!",
     };
   } catch (error) {
     const e = error as Error;
 
     return {
       success: false,
-      message: e.message || "An unknown error occurred.",
+      message: e.message || "Erro ao realizar login.",
     };
   }
 };

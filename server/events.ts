@@ -81,11 +81,11 @@ export async function getEvents(filters?: {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching events:", error);
+    console.error("Erro ao buscar eventos:", error);
     return {
       success: false,
       events: [],
-      error: "Failed to fetch events.",
+      error: "Falha ao buscar eventos.",
     };
   }
 }
@@ -114,7 +114,7 @@ export async function getEventById(eventId: string) {
       return {
         success: false,
         event: null,
-        error: "Event not found.",
+        error: "Evento não encontrado.",
       };
     }
 
@@ -124,11 +124,11 @@ export async function getEventById(eventId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching event:", error);
+    console.error("Erro ao buscar evento:", error);
     return {
       success: false,
       event: null,
-      error: "Failed to fetch event.",
+      error: "Falha ao buscar evento.",
     };
   }
 }
@@ -150,11 +150,11 @@ export async function getFeaturedEvents() {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching featured events:", error);
+    console.error("Erro ao buscar eventos em destaque:", error);
     return {
       success: false,
       events: [],
-      error: "Failed to fetch featured events.",
+      error: "Falha ao buscar eventos em destaque.",
     };
   }
 }
@@ -176,11 +176,11 @@ export async function getUpcomingEvents(limit = 5) {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching upcoming events:", error);
+    console.error("Erro ao buscar próximos eventos:", error);
     return {
       success: false,
       events: [],
-      error: "Failed to fetch upcoming events.",
+      error: "Falha ao buscar próximos eventos.",
     };
   }
 }
@@ -202,11 +202,11 @@ export async function getPastEvents(limit = 5) {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching past events:", error);
+    console.error("Erro ao buscar eventos passados:", error);
     return {
       success: false,
       events: [],
-      error: "Failed to fetch past events.",
+      error: "Falha ao buscar eventos passados.",
     };
   }
 }
@@ -224,7 +224,7 @@ export async function createEvent(data: NewEvent) {
       return {
         success: false,
         event: null,
-        error: "You are not authorized to create events.",
+        error: "Você não tem autorização para criar eventos.",
       };
     }
 
@@ -244,11 +244,11 @@ export async function createEvent(data: NewEvent) {
       error: null,
     };
   } catch (error) {
-    console.error("Error creating event:", error);
+    console.error("Erro ao criar evento:", error);
     return {
       success: false,
       event: null,
-      error: "Failed to create event.",
+      error: "Falha ao criar evento.",
     };
   }
 }
@@ -261,7 +261,7 @@ export async function updateEvent(eventId: string, data: Partial<NewEvent>) {
       return {
         success: false,
         event: null,
-        error: "You are not authorized to update events.",
+        error: "Você não tem autorização para atualizar eventos.",
       };
     }
 
@@ -278,7 +278,7 @@ export async function updateEvent(eventId: string, data: Partial<NewEvent>) {
       return {
         success: false,
         event: null,
-        error: "Event not found.",
+        error: "Evento não encontrado.",
       };
     }
 
@@ -288,11 +288,11 @@ export async function updateEvent(eventId: string, data: Partial<NewEvent>) {
       error: null,
     };
   } catch (error) {
-    console.error("Error updating event:", error);
+    console.error("Erro ao atualizar evento:", error);
     return {
       success: false,
       event: null,
-      error: "Failed to update event.",
+      error: "Falha ao atualizar evento.",
     };
   }
 }
@@ -304,7 +304,7 @@ export async function deleteEvent(eventId: string) {
     if (!admin) {
       return {
         success: false,
-        error: "You are not authorized to delete events.",
+        error: "Você não tem autorização para deletar eventos.",
       };
     }
 
@@ -316,7 +316,7 @@ export async function deleteEvent(eventId: string) {
     if (registrations.length > 0) {
       return {
         success: false,
-        error: "Cannot delete event with existing registrations.",
+        error: "Não é possível deletar evento com inscrições existentes.",
       };
     }
 
@@ -327,10 +327,10 @@ export async function deleteEvent(eventId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error deleting event:", error);
+    console.error("Erro ao deletar evento:", error);
     return {
       success: false,
-      error: "Failed to delete event.",
+      error: "Falha ao deletar evento.",
     };
   }
 }
@@ -342,7 +342,7 @@ export async function publishEvent(eventId: string) {
     if (!admin) {
       return {
         success: false,
-        error: "You are not authorized to publish events.",
+        error: "Você não tem autorização para publicar eventos.",
       };
     }
 
@@ -358,7 +358,7 @@ export async function publishEvent(eventId: string) {
     if (updatedEvent.length === 0) {
       return {
         success: false,
-        error: "Event not found.",
+        error: "Evento não encontrado.",
       };
     }
 
@@ -368,10 +368,10 @@ export async function publishEvent(eventId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error publishing event:", error);
+    console.error("Erro ao publicar evento:", error);
     return {
       success: false,
-      error: "Failed to publish event.",
+      error: "Falha ao publicar evento.",
     };
   }
 }
@@ -383,7 +383,7 @@ export async function cancelEvent(eventId: string) {
     if (!admin) {
       return {
         success: false,
-        error: "You are not authorized to cancel events.",
+        error: "Você não tem autorização para cancelar eventos.",
       };
     }
 
@@ -399,7 +399,7 @@ export async function cancelEvent(eventId: string) {
     if (updatedEvent.length === 0) {
       return {
         success: false,
-        error: "Event not found.",
+        error: "Evento não encontrado.",
       };
     }
 
@@ -409,10 +409,10 @@ export async function cancelEvent(eventId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error cancelling event:", error);
+    console.error("Erro ao cancelar evento:", error);
     return {
       success: false,
-      error: "Failed to cancel event.",
+      error: "Falha ao cancelar evento.",
     };
   }
 }
@@ -431,7 +431,7 @@ export async function getEventStats(eventId: string) {
       return {
         success: false,
         stats: null,
-        error: "Event not found.",
+        error: "Evento não encontrado.",
       };
     }
 
@@ -471,11 +471,11 @@ export async function getEventStats(eventId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching event stats:", error);
+    console.error("Erro ao buscar estatísticas do evento:", error);
     return {
       success: false,
       stats: null,
-      error: "Failed to fetch event stats.",
+      error: "Falha ao buscar estatísticas.",
     };
   }
 }
@@ -488,7 +488,8 @@ export async function getDashboardStats() {
       return {
         success: false,
         stats: null,
-        error: "You are not authorized to view dashboard stats.",
+        error:
+          "Você não tem autorização para visualizar estatísticas do painel.",
       };
     }
 
@@ -524,11 +525,11 @@ export async function getDashboardStats() {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching dashboard stats:", error);
+    console.error("Erro ao buscar estatísticas do painel:", error);
     return {
       success: false,
       stats: null,
-      error: "Failed to fetch dashboard stats.",
+      error: "Falha ao buscar estatísticas do painel.",
     };
   }
 }

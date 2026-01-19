@@ -52,8 +52,8 @@ async function generateQRCode(data: string): Promise<string> {
     });
     return qrCodeDataUrl;
   } catch (error) {
-    console.error("Error generating QR code:", error);
-    throw new Error("Failed to generate QR code");
+    console.error("Erro ao gerar QR code:", error);
+    throw new Error("Falha ao gerar QR code");
   }
 }
 
@@ -80,11 +80,11 @@ export async function getUserRegistrations() {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching user registrations:", error);
+    console.error("Erro ao buscar inscrições do usuário:", error);
     return {
       success: false,
       registrations: [],
-      error: "Failed to fetch registrations.",
+      error: "Falha ao buscar inscrições.",
     };
   }
 }
@@ -97,7 +97,7 @@ export async function getEventRegistrations(eventId: string) {
       return {
         success: false,
         registrations: [],
-        error: "You are not authorized to view registrations.",
+        error: "Você não tem autorização para visualizar as inscrições.",
       };
     }
 
@@ -116,11 +116,11 @@ export async function getEventRegistrations(eventId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching event registrations:", error);
+    console.error("Erro ao buscar inscrições do evento:", error);
     return {
       success: false,
       registrations: [],
-      error: "Failed to fetch registrations.",
+      error: "Falha ao buscar inscrições.",
     };
   }
 }
@@ -142,7 +142,7 @@ export async function getRegistrationById(registrationId: string) {
       return {
         success: false,
         registration: null,
-        error: "Registration not found.",
+        error: "Inscrição não encontrada.",
       };
     }
 
@@ -152,7 +152,7 @@ export async function getRegistrationById(registrationId: string) {
       return {
         success: false,
         registration: null,
-        error: "You are not authorized to view this registration.",
+        error: "Você não tem autorização para visualizar esta inscrição.",
       };
     }
 
@@ -162,11 +162,11 @@ export async function getRegistrationById(registrationId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching registration:", error);
+    console.error("Erro ao buscar inscrição:", error);
     return {
       success: false,
       registration: null,
-      error: "Failed to fetch registration.",
+      error: "Falha ao buscar inscrição.",
     };
   }
 }
@@ -195,14 +195,14 @@ export async function checkUserRegistration(eventId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error checking user registration:", error);
+    console.error("Erro ao verificar inscrição do usuário:", error);
     return {
       success: false,
       isRegistered: false,
       isOnWaitlist: false,
       registration: null,
       waitlist: null,
-      error: "Failed to check registration status.",
+      error: "Falha ao verificar status da inscrição.",
     };
   }
 }
@@ -232,7 +232,7 @@ export async function registerForEvent(
         success: false,
         registration: null,
         waitlist: null,
-        error: "Participant information is required.",
+        error: "As informações do participante são obrigatórias.",
       };
     }
 
@@ -246,7 +246,7 @@ export async function registerForEvent(
         success: false,
         registration: null,
         waitlist: null,
-        error: "Event not found.",
+        error: "Evento não encontrado.",
       };
     }
 
@@ -263,7 +263,7 @@ export async function registerForEvent(
         success: false,
         registration: null,
         waitlist: null,
-        error: "You are already registered for this event.",
+        error: "Você já está inscrito neste evento.",
       };
     }
 
@@ -277,7 +277,7 @@ export async function registerForEvent(
         success: false,
         registration: null,
         waitlist: null,
-        error: "You are already on the waitlist for this event.",
+        error: "Você já está na lista de espera deste evento.",
       };
     }
 
@@ -360,12 +360,12 @@ export async function registerForEvent(
       error: null,
     };
   } catch (error) {
-    console.error("Error registering for event:", error);
+    console.error("Erro ao realizar inscrição no evento:", error);
     return {
       success: false,
       registration: null,
       waitlist: null,
-      error: "Failed to register for event.",
+      error: "Falha ao realizar inscrição no evento.",
     };
   }
 }
@@ -385,7 +385,7 @@ export async function cancelRegistration(registrationId: string) {
     if (!registrationData) {
       return {
         success: false,
-        error: "Registration not found.",
+        error: "Inscrição não encontrada.",
       };
     }
 
@@ -393,7 +393,7 @@ export async function cancelRegistration(registrationId: string) {
     if (registrationData.userId !== user.id) {
       return {
         success: false,
-        error: "You are not authorized to cancel this registration.",
+        error: "Você não tem autorização para cancelar esta inscrição.",
       };
     }
 
@@ -401,7 +401,7 @@ export async function cancelRegistration(registrationId: string) {
     if (new Date(registrationData.event.endDate) < new Date()) {
       return {
         success: false,
-        error: "Cannot cancel registration for past events.",
+        error: "Não é possível cancelar inscrição de eventos passados.",
       };
     }
 
@@ -467,10 +467,10 @@ export async function cancelRegistration(registrationId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error cancelling registration:", error);
+    console.error("Erro ao cancelar inscrição:", error);
     return {
       success: false,
-      error: "Failed to cancel registration.",
+      error: "Falha ao cancelar inscrição.",
     };
   }
 }
@@ -487,7 +487,7 @@ export async function removeFromWaitlist(waitlistId: string) {
     if (!waitlistData) {
       return {
         success: false,
-        error: "Waitlist entry not found.",
+        error: "Entrada na lista de espera não encontrada.",
       };
     }
 
@@ -495,7 +495,8 @@ export async function removeFromWaitlist(waitlistId: string) {
     if (waitlistData.userId !== user.id) {
       return {
         success: false,
-        error: "You are not authorized to remove this waitlist entry.",
+        error:
+          "Você não tem autorização para remover esta entrada da lista de espera.",
       };
     }
 
@@ -515,10 +516,10 @@ export async function removeFromWaitlist(waitlistId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error removing from waitlist:", error);
+    console.error("Erro ao remover da lista de espera:", error);
     return {
       success: false,
-      error: "Failed to remove from waitlist.",
+      error: "Falha ao remover da lista de espera.",
     };
   }
 }
@@ -534,7 +535,7 @@ export async function checkInRegistration(registrationId: string) {
     if (!admin) {
       return {
         success: false,
-        error: "You are not authorized to perform check-ins.",
+        error: "Você não tem autorização para realizar check-ins.",
       };
     }
 
@@ -545,14 +546,14 @@ export async function checkInRegistration(registrationId: string) {
     if (!registrationData) {
       return {
         success: false,
-        error: "Registration not found.",
+        error: "Inscrição não encontrada.",
       };
     }
 
     if (registrationData.status === "attended") {
       return {
         success: false,
-        error: "User has already checked in.",
+        error: "O usuário já realizou o check-in.",
       };
     }
 
@@ -570,10 +571,10 @@ export async function checkInRegistration(registrationId: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error checking in registration:", error);
+    console.error("Erro ao realizar check-in:", error);
     return {
       success: false,
-      error: "Failed to check in registration.",
+      error: "Falha ao realizar check-in.",
     };
   }
 }
@@ -586,7 +587,7 @@ export async function verifyQRCode(qrData: string) {
       return {
         success: false,
         registration: null,
-        error: "You are not authorized to verify QR codes.",
+        error: "Você não tem autorização para verificar QR codes.",
       };
     }
 
@@ -602,7 +603,7 @@ export async function verifyQRCode(qrData: string) {
       return {
         success: false,
         registration: null,
-        error: "Invalid QR code.",
+        error: "QR code inválido.",
       };
     }
 
@@ -612,11 +613,11 @@ export async function verifyQRCode(qrData: string) {
       error: null,
     };
   } catch (error) {
-    console.error("Error verifying QR code:", error);
+    console.error("Erro ao verificar QR code:", error);
     return {
       success: false,
       registration: null,
-      error: "Failed to verify QR code.",
+      error: "Falha ao verificar QR code.",
     };
   }
 }
@@ -672,11 +673,14 @@ export async function getUserRegistrationStats() {
       error: null,
     };
   } catch (error) {
-    console.error("Error fetching user registration stats:", error);
+    console.error(
+      "Erro ao buscar estatísticas de inscrições do usuário:",
+      error
+    );
     return {
       success: false,
       stats: null,
-      error: "Failed to fetch stats.",
+      error: "Falha ao buscar estatísticas.",
     };
   }
 }

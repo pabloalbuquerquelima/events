@@ -17,7 +17,7 @@ export const isAdmin = async () => {
     if (error) {
       return {
         success: false,
-        error: error || "Failed to check permissions",
+        error: error || "Erro ao verificar permissões",
       };
     }
 
@@ -26,7 +26,7 @@ export const isAdmin = async () => {
     console.error(error);
     return {
       success: false,
-      error: error || "Failed to check permissions",
+      error: error || "Erro ao verificar permissões",
     };
   }
 };
