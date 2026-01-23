@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Topbar from "../components/topbar";
 import "./globals.css";
 import Footer from "@/components/footer";
+import WhatsAppFloatingButton from "@/components/whatsApp-floating-button";
 import { Providers } from "./providers";
 
 const geistSans = Geist({
@@ -41,6 +42,7 @@ export default function RootLayout({
             enableSystem
           >
             <Topbar />
+            <WhatsAppFloatingButton />
             {children}
             <Footer />
             <Toaster />
