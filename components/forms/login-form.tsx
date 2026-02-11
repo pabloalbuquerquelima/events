@@ -66,9 +66,11 @@ export function LoginForm({
 
     if (success) {
       toast.success(message as string);
-      router.refresh();
       router.push("/eventos");
-      window.location.reload();
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } else {
       toast.error(message as string);
     }
