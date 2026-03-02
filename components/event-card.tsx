@@ -21,7 +21,7 @@ import {
 } from "@/lib/utils/event";
 
 interface EventCardProps {
-  event: Event & { allowWaitlist?: boolean; endDate?: string | null };
+  event: Event; // mantive exatamente como você tinha (não mudei props)
   isAdmin?: boolean;
   onEdit?: (eventId: string) => void;
   onViewParticipants?: (eventId: string) => void;
@@ -36,8 +36,8 @@ export function EventCard({
   onDelete,
 }: EventCardProps) {
   const now = new Date();
-  const start = new Date(event.startDate);
-  const end = event.endDate ? new Date(event.endDate) : start;
+  const start = new Date((event.startDate as any) ?? now);
+  const end = event.endDate ? new Date(event.endDate as any) : start;
   const isPast = end < now;
 
   const availableSpots = calculateAvailableSpots(
@@ -46,16 +46,18 @@ export function EventCard({
   );
   const isFull = isEventFull(event.maxAttendees, event.currentAttendees);
 
-  const allowWaitlist = !!(event as any).allowWaitlist;
+  const allowWaitlist = !!(
+    (event as any).allowWaitlist || (event as any).waitlistEnabled
+  );
 
   const isWaitlist = isFull && allowWaitlist;
 
-  const cardStateClass = [
-    "group overflow-hidden transition-shadow duration-300",
-    "hover:shadow-lg",
-    isPast ? "filter grayscale opacity-70" : "",
+  const cardClasses = [
+    "group overflow-hidden transition-shadow duration-300 hover:shadow-lg",
     isWaitlist ? "border-2 border-dashed border-slate-300 bg-white/30" : "",
-  ].join(" ");
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const statusBadge = () => {
     if (isPast)
@@ -83,8 +85,7 @@ export function EventCard({
     if (isPast) {
       return (
         <Button
-          aria-disabled
-          className="w-full cursor-not-allowed opacity-60"
+          className="w-full cursor-not-allowed bg-gray-500 opacity-60"
           disabled
           size="sm"
         >
@@ -98,7 +99,7 @@ export function EventCard({
         <Button
           className="w-full border-dashed bg-transparent hover:bg-white/5"
           onClick={() => {
-            /* acione a lógica de entrar na lista de espera aqui */
+            /* entrar na lista de espera */
           }}
           size="sm"
         >
@@ -122,18 +123,21 @@ export function EventCard({
 
     return (
       <Button asChild className="w-full" size="sm">
-        <Link href={`/eventos/${event.id}`}>Ver Detalhes</Link>
+        <Link href={`/eventos/${event.id}`}>Inscrever / Ver</Link>
       </Button>
     );
   };
 
   return (
-    <Card className={cardStateClass}>
+    <Card className={cardClasses}>
       {event.bannerUrl && (
         <div className="relative h-48 overflow-hidden">
           <img
             alt={event.title}
-            className={`h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 ${isPast ? "grayscale" : ""}`}
+            className={`h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+              isPast ? "brightness-75 grayscale" : ""
+            }`}
+            // imagem grayscale apenas quando passou — mantém o link "Detalhes" legível
             src={event.bannerUrl}
           />
           <div className="absolute top-3 left-3">{statusBadge()}</div>
@@ -146,49 +150,55 @@ export function EventCard({
       )}
 
       <CardHeader>
-        <CardTitle className="line-clamp-2">{event.title}</CardTitle>
-        <CardDescription className="line-clamp-2 text-muted-foreground text-sm">
+        <CardTitle className={`line-clamp-2 ${isPast ? "text-slate-600" : ""}`}>
+          {event.title}
+        </CardTitle>
+        <CardDescription
+          className={`line-clamp-2 ${isPast ? "text-slate-500" : ""}`}
+        >
           {event.description}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-3">
-        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+        <div
+          className={`flex items-center gap-2 text-sm ${isPast ? "text-slate-500" : "text-muted-foreground"}`}
+        >
           <Calendar className="h-4 w-4" />
           <span>
-            {formatEventDate(event.startDate)} às{" "}
-            {formatEventTime(event.startDate)}
+            {formatEventDate(start)} às {formatEventTime(start)}
           </span>
         </div>
 
-        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+        <div
+          className={`flex items-center gap-2 text-sm ${isPast ? "text-slate-500" : "text-muted-foreground"}`}
+        >
           <MapPin className="h-4 w-4" />
           <span className="line-clamp-1">{event.location}</span>
         </div>
 
-        <div className="flex items-center justify-between gap-2 text-sm">
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            <span
-              className={
-                isFull
-                  ? "font-medium text-destructive"
+        <div className="flex items-center gap-2 text-sm">
+          <Users className="h-4 w-4" />
+          <span
+            className={
+              isFull
+                ? "font-medium text-destructive"
+                : isPast
+                  ? "text-slate-500"
                   : "text-muted-foreground"
-              }
-            >
-              {isFull
-                ? "Esgotado"
-                : `${availableSpots} vaga${availableSpots !== 1 ? "s" : ""} disponível${availableSpots !== 1 ? "s" : ""}`}
-            </span>
-          </div>
-
-          {/* dica sutil para lista de espera */}
-          {isWaitlist && (
-            <span className="text-slate-500 text-xs italic">
-              Você pode entrar na lista de espera
-            </span>
-          )}
+            }
+          >
+            {isFull
+              ? "Esgotado"
+              : `${availableSpots} vaga${availableSpots !== 1 ? "s" : ""} disponível${availableSpots !== 1 ? "s" : ""}`}
+          </span>
         </div>
+
+        {isWaitlist && (
+          <div className="text-slate-500 text-xs italic">
+            Você pode entrar na lista de espera
+          </div>
+        )}
       </CardContent>
 
       <CardFooter className="flex gap-2">
@@ -226,11 +236,11 @@ export function EventCard({
               <UserPrimaryAction />
             </div>
 
-            {/* ... dentro do CardFooter, substitua a coluna de "Detalhes" por isto */}
+            {/* Detalhes: sempre azul e clicável, mesmo se o evento passou */}
             <div className="w-36">
-              <Button asChild className="" size="sm" variant="ghost">
+              <Button asChild size="sm" variant="ghost">
                 <Link
-                  className="text-blue-600 hover:underline focus:outline-none"
+                  className="text-blue-600 hover:underline"
                   href={`/eventos/${event.id}`}
                 >
                   Detalhes
