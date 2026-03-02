@@ -7,20 +7,19 @@ import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { data: session, isLoading } = authClient.useSession();
+
+  const { data: session, isPending } = authClient.useSession();
 
   useEffect(() => {
-    if (!isLoading && session?.user) {
+    if (!isPending && session?.user) {
       router.replace("/");
     }
-  }, [session, isLoading, router]);
+  }, [session, isPending, router]);
 
-  if (isLoading || session?.user) {
+  if (isPending || session?.user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-6">
-        <div className="w-full max-w-sm text-center">
-          <div className="text-muted-foreground text-sm">Redirecionando…</div>
-        </div>
+        <div className="text-muted-foreground text-sm">Redirecionando...</div>
       </div>
     );
   }
