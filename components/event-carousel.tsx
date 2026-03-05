@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import type { Event } from "@/db/schema";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import type { Event } from "@/db/schema";
 import { EventCard } from "./event-card";
 
 interface EventCarouselProps {
@@ -30,15 +30,11 @@ export function EventCarousel({
   const canGoNext = currentIndex < totalPages - 1;
 
   const goToPrevious = () => {
-    if (canGoPrevious) {
-      setCurrentIndex((prev) => prev - 1);
-    }
+    if (canGoPrevious) setCurrentIndex((prev) => prev - 1);
   };
 
   const goToNext = () => {
-    if (canGoNext) {
-      setCurrentIndex((prev) => prev + 1);
-    }
+    if (canGoNext) setCurrentIndex((prev) => prev + 1);
   };
 
   const displayedEvents = events.slice(
@@ -48,9 +44,11 @@ export function EventCarousel({
 
   return (
     <div className="relative">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-wrap justify-center gap-6">
         {displayedEvents.map((event) => (
-          <EventCard event={event} key={event.id} />
+          <div className="w-90" key={event.id}>
+            <EventCard event={event} />
+          </div>
         ))}
       </div>
 

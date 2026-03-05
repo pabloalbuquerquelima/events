@@ -2,6 +2,7 @@
 
 import {
   Calendar,
+  File,
   Home,
   LayoutDashboard,
   LogOut,
@@ -27,6 +28,7 @@ import { authClient } from "@/lib/auth-client";
 const menuItems = [
   { icon: Home, label: "Início", href: "/" },
   { icon: Calendar, label: "Eventos", href: "/eventos" },
+  { icon: File, label: "Documentos", href: "/documentos" },
 ];
 
 export default function Topbar() {

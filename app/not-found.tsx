@@ -41,9 +41,9 @@ const NotFound = () => {
           </Button>
 
           <Button asChild className="w-full sm:w-auto" variant="outline">
-            <Link href="/painel">
+            <Link href="/">
               <Search className="mr-2 h-4 w-4" />
-              Explorar Cursos
+              Eventos
             </Link>
           </Button>
         </div>

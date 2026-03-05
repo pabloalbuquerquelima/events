@@ -35,6 +35,7 @@ export default function Footer() {
                   Início
                 </Link>
               </li>
+
               <li>
                 <Link
                   className="transition-colors hover:text-primary"
@@ -43,6 +44,16 @@ export default function Footer() {
                   Eventos
                 </Link>
               </li>
+
+              <li>
+                <Link
+                  className="transition-colors hover:text-primary"
+                  href="/documentos"
+                >
+                  Documentos
+                </Link>
+              </li>
+              
               <li>
                 <Link
                   className="transition-colors hover:text-primary"
