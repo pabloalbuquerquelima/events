@@ -1,5 +1,5 @@
-import { BookOpen, Download, FileText, FolderOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { BookOpen, Download, FileText, FolderOpen } from "lucide-react";
 import { DocumentList } from "./_components/document-list";
 import { MOCK_DOCUMENTS } from "./_data/mock-documents";
 
