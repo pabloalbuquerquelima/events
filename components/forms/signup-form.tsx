@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -41,7 +40,6 @@ export function SignupForm({
 }: React.ComponentProps<"div">) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,7 +52,7 @@ export function SignupForm({
   const signInWithGoogle = async () => {
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/eventos",
+      callbackURL: "/",
     });
   };
 
@@ -68,16 +66,12 @@ export function SignupForm({
     );
 
     if (success) {
-      toast.success(
-        `${message as string}`
-      );
-      router.refresh();
-      router.push("/eventos");
+      toast.success(`${message as string}`);
+      window.location.href = "/";
     } else {
       toast.error(message as string);
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   }
 
   return (
