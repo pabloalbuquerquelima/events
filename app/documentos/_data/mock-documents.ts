@@ -12,9 +12,9 @@ export const MOCK_DOCUMENTS: Document[] = [
     publishedAt: "2026-01-20",
     year: 2026,
     downloadUrl:
-      "/documentos/DOCUMENTO CURRICULAR DO MUNICÍPIO DE COREAÚ - DCMC - VERSÃO 2026 OFICIAL.pdf",
+      "/documentos/DOCUMENTO CURRICULAR DO MUNICÍPIO DE COREAÚ - DCMC - 2026.pdf",
     previewUrl:
-      "/documentos/DOCUMENTO CURRICULAR DO MUNICÍPIO DE COREAÚ - DCMC - VERSÃO 2026 OFICIAL.pdf",
+      "/documentos/DOCUMENTO CURRICULAR DO MUNICÍPIO DE COREAÚ - DCMC - 2026.pdf",
     tags: ["DCMC", "currículo", "BNCC", "2026"],
   },
   {
