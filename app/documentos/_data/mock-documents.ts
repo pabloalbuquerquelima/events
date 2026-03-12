@@ -16,7 +16,7 @@ export const MOCK_DOCUMENTS: Document[] = [
     previewUrl:
       "/documentos/DOCUMENTO CURRICULAR DO MUNICÍPIO DE COREAÚ - DCMC - VERSÃO 2026 OFICIAL.pdf",
     tags: ["DCMC", "currículo", "BNCC", "2026"],
-  }, 
+  },
   {
     id: "2",
     title:
@@ -91,6 +91,19 @@ export const MOCK_DOCUMENTS: Document[] = [
     downloadUrl:
       "/documentos/PLANO DE AÇÃO PARA IMPLEMENTAÇÃO DA EQUIDADE E EDUCAÇÃO PARA AS RELAÇÕES ETNICO-RACIAIS - PME - OFICIAL.pdf",
     tags: ["equidade", "étnico-racial", "PME", "inclusão"],
+  },
+  {
+    id: "8",
+    title: "Plano Multiprofissional 2026",
+    description:
+      "Plano Multiprofissional 2026 da rede municipal de Coreaú, estruturando as ações integradas das equipes multiprofissionais de apoio à aprendizagem, com diretrizes para a atuação colaborativa entre profissionais de diferentes áreas no suporte aos estudantes e às unidades escolares.",
+    category: "Portarias",
+    fileType: "PDF",
+    fileSize: "2.0 MB",
+    publishedAt: "2026-01-20",
+    year: 2026,
+    downloadUrl: "/documentos/PLANO MULTIPROFISSIONAL 2026.pdf",
+    tags: ["multiprofissional", "equipe", "apoio", "2026"],
   },
   {
     id: "7",
