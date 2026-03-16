@@ -1,5 +1,10 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,10 +30,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useForm } from "react-hook-form";
-import z from "zod";
 
 const BRAZILIAN_STATES = [
   { value: "AC", label: "Acre" },
@@ -105,10 +106,25 @@ export function ParticipantInfoDialog({
   });
 
   const handleSubmit = async (data: ParticipantInfoFormValues) => {
-    const success = await onSubmit(data);
-    // Só reseta o formulário se a operação foi bem-sucedida
-    if (success) {
-      form.reset();
+    try {
+      const success = await onSubmit(data);
+      // Só reseta o formulário se a operação foi bem-sucedida
+      if (success) {
+        form.reset();
+      }
+    } catch (error) {
+      // ZodError vindo do servidor: seta os erros nos campos correspondentes
+      if (error instanceof z.ZodError) {
+        for (const issue of error.issues) {
+          const field = issue.path[0] as keyof ParticipantInfoFormValues;
+          if (field) {
+            form.setError(field, { message: issue.message });
+          }
+        }
+        toast.error("Verifique os campos destacados e tente novamente.");
+      } else {
+        toast.error("Erro inesperado. Tente novamente.");
+      }
     }
   };
 

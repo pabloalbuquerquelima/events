@@ -83,9 +83,8 @@ export function RegistrationButton({
       toast.error("Erro ao realizar inscrição. Tente novamente.");
       return false;
     } catch (error) {
-      console.error("Erro ao realizar inscrição:", error);
-      toast.error("Erro inesperado. Tente novamente.");
-      return false;
+      // Relança para o dialog tratar ZodErrors com setError nos campos
+      throw error;
     }
   };
 
