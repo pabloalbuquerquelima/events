@@ -1,9 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { DateTimePicker } from "@/components/date-time-picker";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,13 +25,17 @@ import {
   type CreateEventInput,
   createEventSchema,
 } from "@/lib/validations/event";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { type Resolver, useForm } from "react-hook-form";
 
 export function CreateEventForm() {
   const router = useRouter();
   const { isLoading, createEvent } = useEvents();
 
   const form = useForm<CreateEventInput>({
-    resolver: zodResolver(createEventSchema),
+    resolver: zodResolver(createEventSchema) as Resolver<CreateEventInput>,
     defaultValues: {
       title: "",
       description: "",
