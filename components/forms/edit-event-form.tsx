@@ -1,10 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -29,6 +24,11 @@ import {
   type UpdateEventInput,
   updateEventSchema,
 } from "@/lib/validations/event";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { type Resolver, useForm } from "react-hook-form";
 
 interface EditEventFormProps {
   event: Event;
@@ -39,7 +39,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
   const { isLoading, updateEvent } = useEvents();
 
   const form = useForm<UpdateEventInput>({
-    resolver: zodResolver(updateEventSchema),
+    resolver: zodResolver(updateEventSchema) as Resolver<UpdateEventInput>,
   });
 
   useEffect(() => {
