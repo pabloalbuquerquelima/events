@@ -80,9 +80,7 @@ export function RegistrationButton({
 
         return true;
       }
-      toast.error(
-        result.message ?? "Erro ao realizar inscrição. Tente novamente."
-      );
+      toast.error("Erro ao realizar inscrição. Tente novamente.");
       return false;
     } catch (error) {
       console.error("Erro ao realizar inscrição:", error);
