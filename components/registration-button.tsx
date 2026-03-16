@@ -1,12 +1,13 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { ParticipantInfoDialog } from "@/components/participant-info-dialog";
 import { Button } from "@/components/ui/button";
 import { useRegistrations } from "@/hooks/use-registrations";
 import { authClient } from "@/lib/auth-client";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface RegistrationButtonProps {
   eventId: string;
@@ -50,10 +51,10 @@ export function RegistrationButton({
       return;
     }
 
-    // Abrir dialog para coletar informações do participante
     setShowParticipantDialog(true);
   };
 
+  // Retorna true em caso de sucesso, false em caso de erro
   const handleParticipantInfoSubmit = async (participantData: {
     name: string;
     cpf: string;
@@ -61,18 +62,32 @@ export function RegistrationButton({
     state: string;
     contact: string;
     email: string;
-  }) => {
-    const result = await registerForEvent(eventId, 1, participantData);
+  }): Promise<boolean> => {
+    try {
+      const result = await registerForEvent(eventId, 1, participantData);
 
-    if (result.success) {
-      setShowParticipantDialog(false);
+      if (result.success) {
+        setShowParticipantDialog(false);
 
-      if (result.registration) {
-        router.push("/painel/minhas-inscricoes");
-      } else if (result.waitlist) {
-        setIsOnWaitlist(true);
-        router.refresh();
+        if (result.registration) {
+          toast.success("Inscrição realizada com sucesso!");
+          router.push("/painel/minhas-inscricoes");
+        } else if (result.waitlist) {
+          toast.success("Você foi adicionado à lista de espera!");
+          setIsOnWaitlist(true);
+          router.refresh();
+        }
+
+        return true;
       }
+      toast.error(
+        result.message ?? "Erro ao realizar inscrição. Tente novamente."
+      );
+      return false;
+    } catch (error) {
+      console.error("Erro ao realizar inscrição:", error);
+      toast.error("Erro inesperado. Tente novamente.");
+      return false;
     }
   };
 

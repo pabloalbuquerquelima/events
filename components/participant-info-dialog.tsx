@@ -1,9 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useForm } from "react-hook-form";
-import z from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,6 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
+import z from "zod";
 
 const BRAZILIAN_STATES = [
   { value: "AC", label: "Acre" },
@@ -81,7 +81,8 @@ type ParticipantInfoFormValues = z.infer<typeof participantInfoSchema>;
 interface ParticipantInfoDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: ParticipantInfoFormValues) => Promise<void>;
+  // onSubmit agora retorna Promise<boolean>: true = sucesso, false = erro
+  onSubmit: (data: ParticipantInfoFormValues) => Promise<boolean>;
   isLoading?: boolean;
 }
 
@@ -104,11 +105,18 @@ export function ParticipantInfoDialog({
   });
 
   const handleSubmit = async (data: ParticipantInfoFormValues) => {
-    await onSubmit(data);
-    form.reset();
+    const success = await onSubmit(data);
+    // Só reseta o formulário se a operação foi bem-sucedida
+    if (success) {
+      form.reset();
+    }
   };
 
-  // Máscaras de formatação
+  const handleCancel = () => {
+    form.reset();
+    onOpenChange(false);
+  };
+
   const formatCPF = (value: string) => {
     return value
       .replace(/\D/g, "")
@@ -260,7 +268,7 @@ export function ParticipantInfoDialog({
             <DialogFooter>
               <Button
                 disabled={isLoading}
-                onClick={() => onOpenChange(false)}
+                onClick={handleCancel}
                 type="button"
                 variant="outline"
               >
