@@ -59,7 +59,7 @@ export const MOCK_DOCUMENTS: Document[] = [
     publishedAt: "2026-01-20",
     year: 2026,
     downloadUrl:
-      "/documentos/GUIA DE ORIENTAÇÃO OPERACIONAL  DO PROGRAMA - GOOP VERSÃO 2026 OFICIAL.pdf",
+      "/documentos/GUIA DE ORIENTAÇÃO OPERACIONAL DO PROGRAMA-GOOP.pdf",
     tags: ["GOOP", "orientação", "operacional", "gestão", "2026"],
   },
   {
