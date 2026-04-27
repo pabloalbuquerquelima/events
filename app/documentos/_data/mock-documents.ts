@@ -58,9 +58,8 @@ export const MOCK_DOCUMENTS: Document[] = [
     fileSize: "2.9 MB",
     publishedAt: "2026-01-20",
     year: 2026,
-downloadUrl:
-    "/documentos/GUIA%20DE%20ORIENTA%C3%87%C3%83O%20OPERACIONAL%20DO%20PROGRAMA-GOOP.pdf",
-}
+    downloadUrl:
+      "/documentos/GUIA-DE-ORIENTACAO-OPERACIONAL-DO-PROGRAMA-GOOP.pdf",
     tags: ["GOOP", "orientação", "operacional", "gestão", "2026"],
   },
   {
