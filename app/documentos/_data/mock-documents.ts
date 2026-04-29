@@ -121,4 +121,18 @@ export const MOCK_DOCUMENTS: Document[] = [
       "/documentos/PLANO MUNICIPAL PELA ALFABETIZAÇÃO DO MUNICÍPIO DE COREAÚ-CE - OFICIAL.pdf",
     tags: ["alfabetização", "PMALFA", "Coreaú", "ensino fundamental"],
   },
+  {
+    id: "9",
+    title: "Plano de Cargos e Carreira dos Professores de Coreaú - 2026",
+    description:
+      "Plano de Cargos e Carreira dos Professores de Coreaú 2026, documento oficial que estabelece a estrutura de cargos, níveis de progressão, critérios de promoção e direitos da carreira do magistério municipal, orientando a valorização e o desenvolvimento profissional dos professores da rede.",
+    category: "Resoluções",
+    fileType: "PDF",
+    fileSize: "",
+    publishedAt: "2026-01-20",
+    year: 2026,
+    downloadUrl:
+      "/documentos/PLANO DE CARGOS E CARREIRA DOS PROFESSORES DE COREAU - 2026.pdf",
+    tags: ["cargos", "carreira", "professores", "magistério", "2026"],
+  },
 ];
