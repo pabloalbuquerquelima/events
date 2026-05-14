@@ -135,4 +135,21 @@ export const MOCK_DOCUMENTS: Document[] = [
       "/documentos/PLANO DE CARGOS E CARREIRA DOS PROFESSORES DE COREAU - 2026.pdf",
     tags: ["cargos", "carreira", "professores", "magistério", "2026"],
   },
+  {
+    id: "10",
+    title:
+      "Documento Referência do Programa Mais Ensino, Mais Aprendizagem - PROMAIS 2026",
+    description:
+      "Documento Referência oficial do Programa Mais Ensino, Mais Aprendizagem (PROMAIS) 2026, apresentando as diretrizes, objetivos, metodologias e estratégias pedagógicas do programa para a ampliação e qualificação das oportunidades de ensino e aprendizagem na rede municipal de Coreaú.",
+    category: "Resoluções",
+    fileType: "PDF",
+    fileSize: "",
+    publishedAt: "2026-01-20",
+    year: 2026,
+    downloadUrl:
+      "/documentos/DOCUMENTO REFERENCIA DO PROGRAMA MAIS ENSINO, MAIS APRENDIZAGEM - PROMAIS 2026 OFICIAL.pdf",
+    previewUrl:
+      "/documentos/DOCUMENTO REFERENCIA DO PROGRAMA MAIS ENSINO, MAIS APRENDIZAGEM - PROMAIS 2026 OFICIAL.pdf",
+    tags: ["PROMAIS", "ensino", "aprendizagem", "programa", "2026"],
+  },
 ];
